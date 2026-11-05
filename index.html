@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Q-Tion | Тест жасаушы</title>
+<style>
+:root{--bg:#f8fafc;--card:#fff;--text:#1e293b;--muted:#64748b;--primary:#3b82f6;--border:#e2e8f0;--ok:#16a34a;--err:#dc2626}
+@media (prefers-color-scheme:dark){:root{--bg:#0f172a;--card:#1e293b;--text:#e2e8f0;--muted:#94a3b8;--border:#334155}}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text)}
+.wrap{max-width:720px;margin:0 auto;padding:32px 20px}
+h1{text-align:center;font-size:2.4rem;margin:0 0 4px;background:linear-gradient(135deg,#3b82f6,#1e40af);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{text-align:center;color:var(--muted);margin-bottom:28px}
+.card{background:var(--card);border-radius:24px;padding:28px;margin-bottom:20px;box-shadow:0 10px 25px rgba(0,0,0,.06)}
+.drop{border:2px dashed var(--border);border-radius:20px;padding:44px 20px;text-align:center;cursor:pointer;transition:.2s}
+.drop:hover,.drop.over{border-color:var(--primary);background:rgba(59,130,246,.06)}
+.drop b{font-size:1.15rem;display:block;margin-bottom:6px}
+.drop span{color:var(--muted);font-size:.95rem}
+button{padding:12px 20px;border:none;border-radius:999px;background:var(--primary);color:#fff;font-size:1rem;font-weight:600;cursor:pointer}
+button:hover{background:#2563eb}
+button.sec{background:transparent;color:var(--primary);border:2px solid var(--primary)}
+.row{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+label{display:block;font-size:.9rem;color:var(--muted);margin:12px 0 4px}
+input{width:100%;padding:10px 14px;border-radius:12px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:1rem}
+details summary{cursor:pointer;font-weight:600}
+.status{margin-top:16px;font-size:.98rem;line-height:1.5}
+.ok{color:var(--ok)}.err{color:var(--err)}
+.link{display:flex;gap:8px;margin-top:10px}
+.link input{flex:1}
+.hint{font-size:.85rem;color:var(--muted);margin-top:8px;line-height:1.5}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Q-Tion</h1>
+  <div class="sub">Word файлды жүктеңіз, тест пен сілтеме дайын болады</div>
+
+  <div class="card">
+    <div id="drop" class="drop">
+      <b>📄 Word (.docx) файлды осында енгізіңіз</b>
+      <span>немесе басып таңдаңыз</span>
+    </div>
+    <input type="file" id="file" accept=".docx" class="hidden">
+    <div id="status" class="status"></div>
+    <div id="result" class="hidden">
+      <div class="row">
+        <button id="btnOpen">▶ Тестті ашу</button>
+        <button id="btnDl" class="sec">⬇ index.html жүктеп алу</button>
+        <button id="btnPub" class="sec">🔗 Сілтеме жасау</button>
+      </div>
+      <div id="linkBox" class="hidden">
+        <div class="link"><input id="linkInp" readonly><button id="btnCopy">Көшіру</button></div>
+        <div class="hint">Сілтеме 1–2 минуттан кейін ашылады (GitHub Pages сайтты жаңартып жатады).</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <details id="settings">
+      <summary>⚙ GitHub баптаулары (бір рет толтырасыз)</summary>
+      <label>GitHub аккаунт аты (username)</label>
+      <input id="gUser" placeholder="мысалы: semei123">
+      <label>Репозиторий аты</label>
+      <input id="gRepo" placeholder="мысалы: tests">
+      <label>Тармақ (branch)</label>
+      <input id="gBranch" value="main">
+      <label>Токен (fine-grained, Contents: Read and write)</label>
+      <input id="gToken" type="password" placeholder="github_pat_...">
+      <label class="row" style="align-items:center;margin:14px 0 0;gap:8px;color:var(--text)">
+        <input type="checkbox" id="gAuto" style="width:auto"> Файл енгізгенде сілтемені бірден жасау
+      </label>
+      <div class="row"><button id="btnSave">Сақтау</button></div>
+      <div class="hint">Токен тек осы браузерде сақталады және тек github.com-ға жіберіледі. Токенді тек осы бір репоға, тек «Contents» рұқсатымен жасаңыз.</div>
+    </details>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+const TPL = "<!DOCTYPE html>\n<html lang=\"kk\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n<title>Q-Tion | Суретті тест<\/title>\n<style>\n:root{--bg:#f8fafc;--primary:#3b82f6;--white:#fff;--text:#1e293b;--success:#22c55e;--error:#ef4444;--shadow:0 10px 25px rgba(0,0,0,.05)}\nbody.dark{--bg:#0f172a;--white:#1e293b;--text:#e2e8f0;--shadow:0 10px 25px rgba(0,0,0,.3)}\nbody{margin:0;font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);transition:.2s}\n.app-container{max-width:800px;margin:40px auto;padding:20px}\n.hidden{display:none}\n.screen{animation:fadeIn .3s ease-out}\n@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}\nheader{text-align:center;margin-bottom:40px}\nheader h1{background:linear-gradient(135deg,#3b82f6,#1e40af);-webkit-background-clip:text;background-clip:text;color:transparent;font-size:3rem;letter-spacing:-1px;margin:0}\nheader p{color:#64748b}\n.menu-card,.result-card{background:var(--white);padding:40px;border-radius:32px;box-shadow:var(--shadow)}\n.grid-menu{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:30px}\nbutton{padding:14px 18px;border:none;border-radius:24px;background:var(--primary);color:#fff;font-size:1rem;font-weight:600;cursor:pointer;transition:all .2s}\nbutton:hover{background:#2563eb;transform:translateY(-2px);box-shadow:0 10px 20px rgba(59,130,246,.3)}\n.option-item{background:var(--white);border-radius:24px;border:2px solid #e2e8f0;cursor:pointer;transition:.2s;overflow:hidden;padding:20px;margin-bottom:10px}\n.option-item:hover{border-color:var(--primary);transform:translateX(4px)}\n.option-img{width:100%;max-height:180px;object-fit:contain;border-radius:16px;margin-bottom:12px;background:#f1f5f9;padding:8px;cursor:pointer}\n.option-text{font-size:1rem;font-weight:500;display:block;text-align:center}\n.correct{background:#dcfce7!important;border-color:var(--success)!important;color:#166534}\n.wrong{background:#fee2e2!important;border-color:var(--error)!important;color:#991b1b}\n.question-image{margin:20px 0;text-align:center;background:#f1f5f9;padding:16px;border-radius:24px}\n.question-image img{max-width:100%;max-height:320px;border-radius:16px;cursor:pointer}\n.quiz-footer{margin-top:20px;text-align:center}\n.contact-footer{margin-top:40px;padding-top:20px;border-top:1px solid #e2e8f0;text-align:center}\n.contact-link{display:inline-block;font-size:1.2rem;font-weight:600;color:#3b82f6;text-decoration:none;margin:0 15px}\n.modal{display:none;position:fixed;z-index:1000;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,.9);justify-content:center;align-items:center}\n.modal-content{max-width:90%;max-height:90%;border-radius:16px}\n.close-modal{position:absolute;top:20px;right:35px;color:#fff;font-size:40px;cursor:pointer}\n.dark-toggle{position:fixed;top:20px;right:20px;background:var(--primary);border-radius:50%;width:50px;height:50px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:var(--shadow);z-index:100;font-size:22px}\n.score-circle{font-size:2rem;font-weight:700;margin:16px 0;text-align:center}\n.result-details{margin-top:20px;max-height:400px;overflow-y:auto;text-align:left;background:var(--white);border-radius:16px;padding:15px}\n.detail-item{padding:8px;border-bottom:1px solid #e2e8f0;font-size:14px}\n.detail-correct{color:var(--success);font-weight:bold}\n.detail-wrong{color:var(--error);font-weight:bold}\n.result-card .button-group{display:flex;flex-wrap:wrap;justify-content:center;gap:20px;margin:30px 0 20px}\n.result-card .button-group button{border-radius:60px;padding:12px 28px;min-width:180px}\n@media(max-width:550px){.result-card .button-group button{min-width:unset;width:100%;max-width:280px}}\n<\/style>\n<\/head>\n<body>\n<div class=\"dark-toggle\" onclick=\"toggleDarkMode()\">🌙<\/div>\n<div id=\"imageModal\" class=\"modal\"><span class=\"close-modal\">&times;<\/span><img class=\"modal-content\" id=\"modalImg\"><\/div>\n<div class=\"app-container\">\n  <div id=\"home-screen\" class=\"screen\">\n    <header><h1>Q-Tion<\/h1><p>Кәсіби деңгейдегі білім тексеру жүйесі<\/p><\/header>\n    <div class=\"menu-card\"><h3>Тест блогын таңдаңыз:<\/h3><div class=\"grid-menu\" id=\"block-list\"><\/div><\/div>\n  <\/div>\n  <div id=\"quiz-screen\" class=\"screen hidden\">\n    <div class=\"quiz-header\"><span id=\"progress-text\"><\/span><\/div>\n    <div id=\"question-box\"><h2 id=\"q-text\"><\/h2><div id=\"question-image-container\"><\/div><div id=\"options-list\"><\/div><\/div>\n    <div class=\"quiz-footer\"><button id=\"next-btn\" class=\"hidden\">Келесі сұрақ →<\/button><\/div>\n  <\/div>\n  <div id=\"result-screen\" class=\"screen hidden\">\n    <div class=\"result-card\">\n      <h2>Тест аяқталды!<\/h2>\n      <div class=\"score-circle\"><span id=\"final-score\">0<\/span><\/div>\n      <p id=\"result-message\"><\/p>\n      <div class=\"button-group\">\n        <button id=\"retry-wrong-btn\" class=\"hidden\">Қате жауаптарды қайталау<\/button>\n        <button onclick=\"restartQuiz()\">Басты мәзірге оралу<\/button>\n      <\/div>\n      <div id=\"result-details\" class=\"result-details\"><\/div>\n    <\/div>\n  <\/div>\n<\/div>\n<div class=\"contact-footer\"><p>Сұрақтар бойынша хабарласыңыз:<\/p><a href=\"https://www.instagram.com/prismwebq?igsh=ZWRlaDVtbHgwbTNl\" target=\"_blank\" class=\"contact-link\">@prismwebq.kz<\/a><a href=\"tel:+77066772714\" class=\"contact-link\">+7 (706) 677-27-14<\/a><\/div>\n<script>\nconst quizData = __QUIZ_JSON__;\nconst BLOCK_SIZE = 25;\nconst TOTAL_BLOCKS = Math.ceil(quizData.length / BLOCK_SIZE);\nlet currentQuestions = [], currentIndex = 0, score = 0, userAnswers = [], enterHandler = null;\n\nfunction toggleDarkMode(){ document.body.classList.toggle('dark'); }\nfunction enableEnterToNext(){\n  if (enterHandler) document.removeEventListener('keydown', enterHandler);\n  enterHandler = function(e){\n    if (e.key === 'Enter'){\n      const btn = document.getElementById('next-btn');\n      if (btn && !btn.classList.contains('hidden')){ e.preventDefault(); loadNextQuestion(); }\n    }\n  };\n  document.addEventListener('keydown', enterHandler);\n}\nfunction buildBlockButtons(){\n  const c = document.getElementById('block-list'); c.innerHTML = '';\n  for (let i = 0; i < TOTAL_BLOCKS; i++){\n    const s = i*BLOCK_SIZE+1, e = Math.min((i+1)*BLOCK_SIZE, quizData.length);\n    const b = document.createElement('button'); b.textContent = `${s} - ${e}`; b.onclick = () => initQuiz(i); c.appendChild(b);\n  }\n}\nfunction initQuiz(bi){\n  const s = bi*BLOCK_SIZE, e = Math.min(s+BLOCK_SIZE, quizData.length);\n  currentQuestions = [];\n  for (let i = s; i < e; i++){\n    const q = quizData[i];\n    currentQuestions.push({id:q.id, text:q.question, correct:q.correct, variants:[...q.variants].sort(()=>Math.random()-.5), image:q.image||null});\n  }\n  for (let i = currentQuestions.length-1; i > 0; i--){\n    const j = Math.floor(Math.random()*(i+1));\n    [currentQuestions[i], currentQuestions[j]] = [currentQuestions[j], currentQuestions[i]];\n  }\n  currentIndex = 0; score = 0; userAnswers = new Array(currentQuestions.length).fill(null);\n  document.getElementById('home-screen').classList.add('hidden');\n  document.getElementById('quiz-screen').classList.remove('hidden');\n  document.getElementById('result-screen').classList.add('hidden');\n  showQuestion(); enableEnterToNext();\n}\nfunction openModal(src){ document.getElementById('imageModal').style.display='flex'; document.getElementById('modalImg').src=src; }\ndocument.querySelector('.close-modal').onclick = () => document.getElementById('imageModal').style.display='none';\nwindow.onclick = e => { if (e.target === document.getElementById('imageModal')) document.getElementById('imageModal').style.display='none'; };\nfunction showQuestion(){\n  const q = currentQuestions[currentIndex];\n  document.getElementById('q-text').innerText = q.text;\n  document.getElementById('progress-text').innerText = `Сұрақ: ${currentIndex+1}/${currentQuestions.length}`;\n  const ic = document.getElementById('question-image-container'); ic.innerHTML = '';\n  if (q.image){\n    const d = document.createElement('div'); d.className='question-image';\n    const im = document.createElement('img'); im.src=q.image; im.onclick=()=>openModal(q.image);\n    d.appendChild(im); ic.appendChild(d);\n  }\n  const c = document.getElementById('options-list'); c.innerHTML = '';\n  const saved = userAnswers[currentIndex];\n  q.variants.forEach(v => {\n    const d = document.createElement('div'); d.className='option-item';\n    if (v.image){\n      const im = document.createElement('img'); im.src=v.image; im.className='option-img';\n      im.onclick = e => { e.stopPropagation(); openModal(v.image); };\n      d.appendChild(im);\n    }\n    const sp = document.createElement('span'); sp.className='option-text'; sp.innerText=v.text; d.appendChild(sp);\n    d.dataset.text = v.text;\n    if (saved !== null){\n      if (v.text === q.correct) d.classList.add('correct'); else if (v.text === saved) d.classList.add('wrong');\n      d.style.pointerEvents='none';\n    } else d.onclick = () => checkAnswer(d, v.text, q.correct);\n    c.appendChild(d);\n  });\n  const nb = document.getElementById('next-btn');\n  if (saved !== null) nb.classList.remove('hidden'); else nb.classList.add('hidden');\n  enableEnterToNext();\n}\nfunction checkAnswer(el, sel, cor){\n  const all = document.querySelectorAll('.option-item');\n  all.forEach(o => o.style.pointerEvents='none');\n  if (sel === cor){ el.classList.add('correct'); score++; }\n  else { el.classList.add('wrong'); all.forEach(o => { if (o.dataset.text === cor) o.classList.add('correct'); }); }\n  userAnswers[currentIndex] = sel;\n  document.getElementById('next-btn').classList.remove('hidden');\n  enableEnterToNext();\n}\nfunction loadNextQuestion(){ if (currentIndex+1 < currentQuestions.length){ currentIndex++; showQuestion(); } else showResults(); }\nfunction showResults(){\n  if (enterHandler){ document.removeEventListener('keydown', enterHandler); enterHandler=null; }\n  document.getElementById('quiz-screen').classList.add('hidden');\n  document.getElementById('result-screen').classList.remove('hidden');\n  document.getElementById('final-score').innerText = `${score}/${currentQuestions.length}`;\n  const p = score/currentQuestions.length*100;\n  document.getElementById('result-message').innerText = p>=90?'Тамаша!':p>=70?'Жақсы!':p>=50?'Орташа':'Қайталаңыз';\n  const dd = document.getElementById('result-details'); dd.innerHTML = '<h4>Сұрақтар бойынша нәтиже:<\/h4>';\n  currentQuestions.forEach((q, i) => {\n    const ok = userAnswers[i] === q.correct;\n    const d = document.createElement('div'); d.className='detail-item';\n    const b = document.createElement('b'); b.textContent = (i+1)+'. ';\n    const t = document.createTextNode(q.text.substring(0,80)+'... ');\n    const s = document.createElement('span'); s.className = ok?'detail-correct':'detail-wrong'; s.textContent = ok?'✓ Дұрыс':'✗ Бұрыс';\n    const br = document.createElement('br'); const sm = document.createElement('small'); sm.textContent = 'Дұрыс жауап: '+q.correct;\n    d.append(b,t,s,br,sm); dd.appendChild(d);\n  });\n  const rb = document.getElementById('retry-wrong-btn'); rb.classList.remove('hidden'); rb.onclick = retryWrongQuestions;\n}\nfunction retryWrongQuestions(){\n  const wrong = currentQuestions.filter((q,i) => userAnswers[i] !== q.correct);\n  if (!wrong.length){ alert('Барлық жауаптар дұрыс!'); return; }\n  currentQuestions = wrong.map(q => ({...q, variants:[...q.variants].sort(()=>Math.random()-.5)}));\n  currentIndex = 0; score = 0; userAnswers = new Array(currentQuestions.length).fill(null);\n  document.getElementById('result-screen').classList.add('hidden');\n  document.getElementById('quiz-screen').classList.remove('hidden');\n  showQuestion(); enableEnterToNext();\n}\nfunction restartQuiz(){\n  if (enterHandler){ document.removeEventListener('keydown', enterHandler); enterHandler=null; }\n  document.getElementById('result-screen').classList.add('hidden');\n  document.getElementById('home-screen').classList.remove('hidden');\n}\ndocument.getElementById('next-btn').onclick = loadNextQuestion;\nbuildBlockButtons();\n<\/script>\n<\/body>\n<\/html>\n";
+const W='http://schemas.openxmlformats.org/wordprocessingml/2006/main';
+const A='http://schemas.openxmlformats.org/drawingml/2006/main';
+const R='http://schemas.openxmlformats.org/officeDocument/2006/relationships';
+const MIME={png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg',gif:'image/gif',webp:'image/webp',svg:'image/svg+xml',bmp:'image/bmp'};
+const $=id=>document.getElementById(id);
+let builtHtml=null, builtName='test';
+
+function setStatus(msg,cls){ $('status').className='status '+(cls||''); $('status').textContent=msg; }
+
+async function parseDocx(file){
+  const zip=await JSZip.loadAsync(file);
+  const docFile=zip.file('word/document.xml');
+  if(!docFile) throw new Error('Бұл docx файл емес сияқты.');
+  const dom=s=>new DOMParser().parseFromString(s,'application/xml');
+  const dd=dom(await docFile.async('string'));
+  const rels={};
+  const relFile=zip.file('word/_rels/document.xml.rels');
+  if(relFile){ for(const r of dom(await relFile.async('string')).getElementsByTagName('Relationship')) rels[r.getAttribute('Id')]=r.getAttribute('Target'); }
+  const cache={};
+  async function imageOf(p){
+    let rid=null;
+    const bl=p.getElementsByTagNameNS(A,'blip');
+    if(bl.length) rid=bl[0].getAttributeNS(R,'embed');
+    if(!rid){ const im=p.getElementsByTagName('v:imagedata'); if(im.length) rid=im[0].getAttributeNS(R,'id')||im[0].getAttribute('r:id'); }
+    if(!rid||!rels[rid]) return null;
+    if(cache[rid]) return cache[rid];
+    let path=rels[rid].replace(/^\//,''); if(!path.startsWith('word/')) path='word/'+path;
+    const f=zip.file(path); if(!f) return null;
+    const ext=path.split('.').pop().toLowerCase();
+    return cache[rid]=`data:${MIME[ext]||'image/'+ext};base64,${await f.async('base64')}`;
+  }
+  const questions=[]; let q=null, inQ=false;
+  const push=()=>{ if(q!==null) questions.push({id:questions.length+1,question:q.text,correct:q.correct,variants:q.variants,image:q.image}); };
+  const paras=dd.getElementsByTagNameNS(W,'p');
+  for(const p of paras){
+    const text=Array.from(p.getElementsByTagNameNS(W,'t')).map(t=>t.textContent).join('').trim();
+    if(text.startsWith('<question')){
+      push();
+      q={text:text.replace(/<question\d*>/,'').trim(),correct:null,variants:[],image:await imageOf(p)};
+      inQ=true; continue;
+    }
+    if(!inQ) continue;
+    if(text.startsWith('<variantright>')){
+      const t=text.replace('<variantright>','').trim(); q.correct=t;
+      q.variants.push({text:t,image:await imageOf(p)});
+    } else if(text.startsWith('<variant>')){
+      q.variants.push({text:text.replace('<variant>','').trim(),image:await imageOf(p)});
+    } else {
+      if(text) q.text=q.text?q.text+' '+text:text;
+      const im=await imageOf(p); if(im&&!q.image) q.image=im;
+    }
+  }
+  push();
+  return questions;
+}
+
+function buildHtml(questions){
+  const json=JSON.stringify(questions).replace(/<\//g,'<\\/');
+  return TPL.replace('__QUIZ_JSON__',()=>json);
+}
+
+async function handleFile(file){
+  if(!file) return;
+  if(!/\.docx$/i.test(file.name)){ setStatus('Тек .docx файл қабылданады.','err'); return; }
+  $('result').classList.add('hidden'); $('linkBox').classList.add('hidden');
+  setStatus('Оқып жатыр...');
+  try{
+    const qs=await parseDocx(file);
+    if(!qs.length){ setStatus('Ешқандай сұрақ табылмады. <question> белгілерін тексеріңіз.','err'); return; }
+    builtHtml=buildHtml(qs);
+    builtName=file.name.replace(/\.docx$/i,'');
+    const withImg=qs.filter(x=>x.image).length;
+    setStatus(`✅ ${qs.length} сұрақ өңделді. Суреті бар сұрақтар: ${withImg}`,'ok');
+    $('result').classList.remove('hidden');
+    if($('gAuto').checked && hasSettings()) publish();
+  }catch(e){ console.error(e); setStatus('Қате: '+e.message,'err'); }
+}
+
+// ---------- GitHub ----------
+const KEYS=['gUser','gRepo','gBranch','gToken'];
+function loadSettings(){
+  try{
+    for(const k of KEYS){ const v=localStorage.getItem('qtion_'+k); if(v) $(k).value=v; }
+    $('gAuto').checked=localStorage.getItem('qtion_gAuto')==='1';
+  }catch(e){}
+  if(!hasSettings()) $('settings').open=true;
+}
+function saveSettings(){
+  try{
+    for(const k of KEYS) localStorage.setItem('qtion_'+k,$(k).value.trim());
+    localStorage.setItem('qtion_gAuto',$('gAuto').checked?'1':'0');
+  }catch(e){}
+  setStatus('Баптаулар сақталды.','ok');
+}
+function hasSettings(){ return $('gUser').value.trim()&&$('gRepo').value.trim()&&$('gToken').value.trim(); }
+
+function toBase64(str){
+  return new Promise((res,rej)=>{
+    const r=new FileReader();
+    r.onload=()=>res(r.result.split(',')[1]);
+    r.onerror=()=>rej(new Error('Кодтау қатесі'));
+    r.readAsDataURL(new Blob([str],{type:'text/html'}));
+  });
+}
+function slug(s){
+  const t=s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  return (t||'test')+'-'+Math.random().toString(36).slice(2,7);
+}
+async function publish(){
+  if(!builtHtml){ setStatus('Алдымен файл енгізіңіз.','err'); return; }
+  if(!hasSettings()){ $('settings').open=true; setStatus('GitHub баптауларын толтырыңыз.','err'); return; }
+  const user=$('gUser').value.trim(), repo=$('gRepo').value.trim(), branch=$('gBranch').value.trim()||'main', token=$('gToken').value.trim();
+  const folder='tests/'+slug(builtName);
+  setStatus('GitHub-қа жүктеп жатыр...');
+  try{
+    const content=await toBase64(builtHtml);
+    const res=await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${folder}/index.html`,{
+      method:'PUT',
+      headers:{'Authorization':'Bearer '+token,'Accept':'application/vnd.github+json','Content-Type':'application/json'},
+      body:JSON.stringify({message:'Add test '+builtName,content,branch})
+    });
+    if(!res.ok){
+      let m=''; try{ m=(await res.json()).message; }catch(e){}
+      throw new Error(`GitHub ${res.status}: ${m||'белгісіз қате'}`);
+    }
+    const base=repo.toLowerCase()===(user+'.github.io').toLowerCase()?`https://${user}.github.io`:`https://${user}.github.io/${repo}`;
+    const url=`${base}/${folder}/`;
+    $('linkInp').value=url; $('linkBox').classList.remove('hidden');
+    setStatus('✅ Тест жүктелді. Сілтеме дайын.','ok');
+  }catch(e){ console.error(e); setStatus('Қате: '+e.message,'err'); }
+}
+
+// ---------- UI ----------
+const drop=$('drop'), fileInp=$('file');
+drop.onclick=()=>fileInp.click();
+fileInp.onchange=()=>handleFile(fileInp.files[0]);
+['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('over');}));
+['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('over');}));
+drop.addEventListener('drop',e=>handleFile(e.dataTransfer.files[0]));
+$('btnOpen').onclick=()=>{ const u=URL.createObjectURL(new Blob([builtHtml],{type:'text/html'})); window.open(u,'_blank'); };
+$('btnDl').onclick=()=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([builtHtml],{type:'text/html'})); a.download='index.html'; a.click(); };
+$('btnPub').onclick=publish;
+$('btnSave').onclick=saveSettings;
+$('btnCopy').onclick=async()=>{ try{ await navigator.clipboard.writeText($('linkInp').value); $('btnCopy').textContent='Көшірілді ✓'; setTimeout(()=>$('btnCopy').textContent='Көшіру',1500);}catch(e){ $('linkInp').select(); } };
+loadSettings();
+</script>
+</body>
+</html>

@@ -149,24 +149,49 @@ async function parseDocx(file){
     const ext=path.split('.').pop().toLowerCase();
     return cache[rid]=`data:${MIME[ext]||'image/'+ext};base64,${await f.async('base64')}`;
   }
+  // абзацты жолдарға бөледі: жол үзілісі (Shift+Enter) бойынша және <question>/<variant> белгілері бойынша
+  async function linesOf(p){
+    let s=''; const imgs=[];
+    for(const r of p.getElementsByTagNameNS(W,'r')){
+      for(const ch of Array.from(r.childNodes)){
+        const n=ch.localName;
+        if(n==='t') s+=ch.textContent;
+        else if(n==='br'||n==='cr') s+='\n';
+        else if(n==='tab') s+=' ';
+        else if(n==='drawing'||n==='pict'){
+          const im=await imageOf(ch);
+          if(im){ s+='\uE000'+imgs.length+'\uE001'; imgs.push(im); }
+        }
+      }
+    }
+    const out=[];
+    for(const part of s.split(/\n|(?=<question\d*>|<variantright>|<variant>)/)){
+      const m=part.match(/\uE000(\d+)\uE001/);
+      const image=m?imgs[+m[1]]:null;
+      const text=part.replace(/\uE000\d+\uE001/g,'').trim();
+      if(text||image) out.push({text,image});
+    }
+    return out;
+  }
   const questions=[]; let q=null, inQ=false;
   const push=()=>{ if(q!==null) questions.push({id:questions.length+1,question:q.text,correct:q.correct,variants:q.variants,image:q.image}); };
   for(const p of dd.getElementsByTagNameNS(W,'p')){
-    const text=Array.from(p.getElementsByTagNameNS(W,'t')).map(t=>t.textContent).join('').trim();
-    if(text.startsWith('<question')){
-      push();
-      q={text:text.replace(/<question\d*>/,'').trim(),correct:null,variants:[],image:await imageOf(p)};
-      inQ=true; continue;
-    }
-    if(!inQ) continue;
-    if(text.startsWith('<variantright>')){
-      const t=text.replace('<variantright>','').trim(); q.correct=t;
-      q.variants.push({text:t,image:await imageOf(p)});
-    } else if(text.startsWith('<variant>')){
-      q.variants.push({text:text.replace('<variant>','').trim(),image:await imageOf(p)});
-    } else {
-      if(text) q.text=q.text?q.text+' '+text:text;
-      const im=await imageOf(p); if(im&&!q.image) q.image=im;
+    for(const {text,image} of await linesOf(p)){
+      if(text.startsWith('<question')){
+        push();
+        q={text:text.replace(/<question\d*>/,'').trim(),correct:null,variants:[],image};
+        inQ=true; continue;
+      }
+      if(!inQ) continue;
+      if(text.startsWith('<variantright>')){
+        const t=text.replace('<variantright>','').trim(); q.correct=t;
+        q.variants.push({text:t,image});
+      } else if(text.startsWith('<variant>')){
+        q.variants.push({text:text.replace('<variant>','').trim(),image});
+      } else {
+        if(text) q.text=q.text?q.text+' '+text:text;
+        if(image&&!q.image) q.image=image;
+      }
     }
   }
   push();

@@ -3,111 +3,227 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Q-Tion | Тест жасаушы</title>
+<title>Q-Tion</title>
 <style>
-:root{--bg:#f8fafc;--card:#fff;--text:#1e293b;--muted:#64748b;--primary:#3b82f6;--border:#e2e8f0;--ok:#16a34a;--err:#dc2626}
+:root{--bg:#f8fafc;--card:#fff;--text:#1e293b;--muted:#64748b;--primary:#3b82f6;--border:#e2e8f0;--ok:#16a34a;--err:#dc2626;--warn:#f59e0b}
 @media (prefers-color-scheme:dark){:root{--bg:#0f172a;--card:#1e293b;--text:#e2e8f0;--muted:#94a3b8;--border:#334155}}
 *{box-sizing:border-box}
 body{margin:0;font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text)}
-.wrap{max-width:720px;margin:0 auto;padding:32px 20px}
+.wrap{max-width:860px;margin:0 auto;padding:28px 20px 80px}
 h1{text-align:center;font-size:2.4rem;margin:0 0 4px;background:linear-gradient(135deg,#3b82f6,#1e40af);-webkit-background-clip:text;background-clip:text;color:transparent}
 h3{margin:0 0 12px}
-.sub{text-align:center;color:var(--muted);margin-bottom:28px}
-.card{background:var(--card);border-radius:24px;padding:28px;margin-bottom:20px;box-shadow:0 10px 25px rgba(0,0,0,.06)}
-.drop{border:2px dashed var(--border);border-radius:20px;padding:44px 20px;text-align:center;cursor:pointer;transition:.2s;margin-top:14px}
+.sub{text-align:center;color:var(--muted);margin-bottom:20px}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:22px}
+.tab{padding:10px 18px;border-radius:999px;border:2px solid var(--primary);background:transparent;color:var(--primary);font-size:.95rem;font-weight:600;cursor:pointer}
+.tab:hover{background:rgba(59,130,246,.12)}
+.tab.on,.tab.on:hover{background:var(--primary);color:#fff}
+.panel{display:none}.panel.on{display:block}
+.card{background:var(--card);border-radius:24px;padding:24px;margin-bottom:18px;box-shadow:0 10px 25px rgba(0,0,0,.06)}
+.drop{border:2px dashed var(--border);border-radius:20px;padding:40px 20px;text-align:center;cursor:pointer;transition:.2s;margin-top:12px}
 .drop:hover,.drop.over{border-color:var(--primary);background:rgba(59,130,246,.06)}
-.drop b{font-size:1.15rem;display:block;margin-bottom:6px}
+.drop b{font-size:1.1rem;display:block;margin-bottom:6px}
 .drop span{color:var(--muted);font-size:.95rem}
-button{padding:12px 20px;border:none;border-radius:999px;background:var(--primary);color:#fff;font-size:1rem;font-weight:600;cursor:pointer}
+button{padding:11px 20px;border:none;border-radius:999px;background:var(--primary);color:#fff;font-size:1rem;font-weight:600;cursor:pointer}
 button:hover{background:#2563eb}
 button.sec{background:transparent;color:var(--primary);border:2px solid var(--primary)}
-button.sm{padding:6px 14px;font-size:.88rem}
+button.sm{padding:5px 12px;font-size:.85rem}
 button.danger{background:transparent;color:var(--err);border:2px solid var(--err)}
-.row{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
-label{display:block;font-size:.9rem;color:var(--muted);margin:12px 0 4px}
-input[type=text],input[type=password],input:not([type]){width:100%;padding:10px 14px;border-radius:12px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:1rem}
-details summary{cursor:pointer;font-weight:600}
-.status{margin-top:16px;font-size:.98rem;line-height:1.5}
-.ok{color:var(--ok)}.err{color:var(--err)}
-.link{display:flex;gap:8px;margin-top:10px}
-.link input{flex:1}
-.hint{font-size:.85rem;color:var(--muted);margin-top:8px;line-height:1.5}
+button:disabled{opacity:.6;cursor:wait}
+.tab:hover,.tab.on:hover{transform:none}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.mt{margin-top:16px}
+input[type=text],input[type=password],input:not([type]),select,textarea{padding:10px 14px;border-radius:12px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:1rem;font-family:inherit}
+input[type=text],input[type=password],input:not([type]),textarea{width:100%}
+textarea{resize:vertical;min-height:54px}
+label.fl{display:block;font-size:.9rem;color:var(--muted);margin:14px 0 4px}
+label.fl:first-child{margin-top:0}
+label.chk{display:flex;gap:8px;align-items:center;margin-top:14px}
+.status{margin-top:14px;line-height:1.5}
+.ok{color:var(--ok)}.err{color:var(--err)}.warn{color:var(--warn)}
+.hint{font-size:.85rem;color:var(--muted);line-height:1.5}
 .hidden{display:none!important}
+.link{display:flex;gap:8px;margin-top:8px}
+.link input{flex:1}
+.lbl{font-size:.85rem;color:var(--muted);margin-top:14px;font-weight:600}
+.preview{margin-top:8px;font-size:1.02rem;font-weight:600;word-break:break-all;color:var(--primary)}
 .item{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--border)}
 .item:last-child{border-bottom:none}
-.item .nm{flex:1;min-width:160px;font-weight:600;word-break:break-all}
+.item .nm{flex:1;min-width:200px;font-weight:600;word-break:break-all}
 .item .nm small{display:block;font-weight:400;color:var(--muted);font-size:.8rem}
+.item .nm .tag{display:inline-block;font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:999px;background:rgba(59,130,246,.15);color:var(--primary);margin-left:6px;vertical-align:middle}
 .item .bt{display:flex;gap:6px;flex-wrap:wrap}
 a.btn{display:inline-block;padding:6px 14px;font-size:.88rem;border-radius:999px;background:var(--primary);color:#fff;text-decoration:none;font-weight:600}
+a{color:var(--primary)}
+details summary{cursor:pointer;font-weight:600}
+.q{border:2px solid var(--border);border-radius:20px;padding:16px;margin-bottom:14px;background:var(--card)}
+.q.bad{border-color:var(--warn)}
+.qh{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-weight:700}
+.thumb{max-height:110px;max-width:100%;border-radius:10px;background:#f1f5f9;padding:4px;display:block;margin:8px 0}
+.opt{display:flex;gap:8px;align-items:flex-start;margin-top:8px}
+.opt input[type=radio]{margin-top:12px;width:18px;height:18px;flex:none}
+.opt .ctl{flex:1;min-width:0}
+.opt.right input[type=text]{border-color:var(--ok);background:rgba(34,197,94,.1)}
+.bar{position:sticky;bottom:0;background:var(--card);padding:14px 20px;border-radius:20px;box-shadow:0 -6px 24px rgba(0,0,0,.12);margin-top:10px}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px}
 .modal .box{background:var(--card);border-radius:24px;padding:28px;text-align:center;max-width:360px;width:100%}
-#qrBox{background:#fff;padding:16px;border-radius:16px;display:inline-block;margin:12px 0}
-#qrBox img,#qrBox canvas{display:block}
+#q_box{background:#fff;padding:16px;border-radius:16px;display:inline-block;margin:12px 0}
+#q_box img,#q_box canvas{display:block}
 </style>
 </head>
 <body>
 <div class="wrap">
   <h1>Q-Tion</h1>
-  <div class="sub">Word файлды жүктеңіз, тест пен сілтеме дайын болады</div>
+  <div class="sub">Файл дайындау → тест жасау → Vercel сілтемесі: бәрі бір жерде</div>
 
-  <div class="card">
-    <label style="margin-top:0">Тест аты (бос қалса, файл аты алынады)</label>
-    <input id="tName" placeholder="мысалы: Физика 1-блок">
-    <div id="drop" class="drop">
-      <b>📄 Word (.docx) файлды осында енгізіңіз</b>
-      <span>немесе басып таңдаңыз</span>
-    </div>
-    <input type="file" id="file" accept=".docx" class="hidden">
-    <div id="status" class="status"></div>
-    <div id="result" class="hidden">
-      <div class="row">
-        <button id="btnOpen">▶ Тестті ашу</button>
-        <button id="btnDl" class="sec">⬇ index.html жүктеп алу</button>
-        <button id="btnPub" class="sec">🔗 Сілтеме жасау</button>
+  <div class="tabs">
+    <button class="tab on" data-tab="org">1 · Файл дайындау</button>
+    <button class="tab" data-tab="make">2 · Тест жасау</button>
+    <button class="tab" data-tab="links">3 · Сілтемелер</button>
+    <button class="tab" data-tab="set">⚙ Баптаулар</button>
+  </div>
+
+  <!-- ============ 1. ФАЙЛ ДАЙЫНДАУ ============ -->
+  <div id="p_org" class="panel on">
+    <div class="card">
+      <div class="hint">Кез келген сұрақ файлын тест жасауға арналған форматқа келтіреді</div>
+      <div id="o_drop" class="drop">
+        <b>📄 Word (.docx) файлды осында енгізіңіз</b>
+        <span>A B C D E, А Б В Г Д немесе 1 2 3 4 5 нұсқалары, суреттері бар файлдар да болады</span>
       </div>
-      <div id="linkBox" class="hidden">
-        <div class="link"><input id="linkInp" readonly><button id="btnCopy">Көшіру</button><button id="btnQrNew" class="sec">QR</button></div>
-        <div id="readyMsg" class="hint"></div>
+      <input type="file" id="o_file" accept=".docx" class="hidden">
+      <div class="row mt">
+        <label class="hint">Нұсқа белгілері:</label>
+        <select id="o_mode">
+          <option value="auto">Автоматты</option>
+          <option value="letters">Әріптер (A–E, А–Д)</option>
+          <option value="digits">Сандар (1–5)</option>
+        </select>
+        <label class="hint" style="margin-left:12px">Дұрыс жауап:</label>
+        <select id="o_ans">
+          <option value="first">Әрдайым бірінші нұсқа (A / 1)</option>
+          <option value="auto">Файлдан автоматты табу</option>
+        </select>
+      </div>
+      <div id="o_status" class="status"></div>
+    </div>
+
+    <div id="o_editor" class="hidden">
+      <div class="card">
+        <div class="row" style="justify-content:space-between">
+          <div id="o_summary"></div>
+          <label class="hint" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="o_onlyBad"> Тек жауабы жоқтарын көрсету</label>
+        </div>
+        <div class="hint" style="margin-top:8px">Жасыл жолақ дұрыс жауапты көрсетеді. Қате болса, дөңгелекті басып дұрыс жауапты ауыстырыңыз, мәтінді өңдеңіз немесе артық нұсқаны өшіріңіз.</div>
+      </div>
+      <div id="o_list"></div>
+      <div class="bar">
+        <div class="row">
+          <button id="o_btnSend">▶ Тест жасауға жіберу</button>
+          <button id="o_btnDocx" class="sec">⬇ Дайын docx жүктеп алу</button>
+          <label class="hint" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="o_skipBad"> Жауабы белгіленбегендерді қоспау</label>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="card">
-    <div class="row" style="margin:0 0 8px;align-items:center;justify-content:space-between">
-      <h3 style="margin:0">📚 Менің тесттерім</h3>
-      <button id="btnRefresh" class="sec sm">↻ Жаңарту</button>
+  <!-- ============ 2. ТЕСТ ЖАСАУ ============ -->
+  <div id="p_make" class="panel">
+    <div class="card">
+      <label class="fl">Тест аты (бос қалса, файл аты алынады)</label>
+      <input id="m_tName" placeholder="мысалы: Физика 1-блок">
+      <div id="m_drop" class="drop">
+        <b>📄 Word (.docx) файлды осында енгізіңіз</b>
+        <span>немесе басып таңдаңыз. «1 · Файл дайындау» бөлімінен де жіберуге болады</span>
+      </div>
+      <input type="file" id="m_file" accept=".docx" class="hidden">
+      <div id="m_status" class="status"></div>
+
+      <div id="m_result" class="hidden">
+        <label class="chk"><input type="checkbox" id="m_useV" checked> Vercel сілтемесін де жасау (vercel.app)</label>
+        <label class="fl">Vercel сайт аты (бос қалса, тест атынан алынады)</label>
+        <input id="m_vname" placeholder="fizika">
+        <div class="preview">https://<span id="m_vprev">fizika</span>.vercel.app/</div>
+        <div class="row mt">
+          <button id="m_btnPub">🔗 Сілтеме жасау</button>
+          <button id="m_btnOpen" class="sec">▶ Тестті ашу</button>
+          <button id="m_btnDl" class="sec">⬇ index.html жүктеп алу</button>
+        </div>
+        <div id="m_linkBox" class="hidden">
+          <div id="m_vcWrap">
+            <div class="lbl">Vercel сілтеме (студенттерге осыны жіберіңіз)</div>
+            <div class="link"><input id="m_vcInp" readonly><button id="m_vcCopy">Көшіру</button><button id="m_vcQr" class="sec">QR</button></div>
+          </div>
+          <div class="lbl">GitHub сілтеме</div>
+          <div class="link"><input id="m_ghInp" readonly><button id="m_ghCopy" class="sec">Көшіру</button><button id="m_ghQr" class="sec">QR</button></div>
+          <div id="m_ready" class="hint" style="margin-top:10px"></div>
+        </div>
+      </div>
     </div>
-    <div id="listBox" class="hint">Жүктелуде...</div>
   </div>
 
-  <div class="card">
-    <details id="settings">
-      <summary>⚙ GitHub баптаулары (бір рет толтырасыз)</summary>
-      <label>GitHub аккаунт аты (username)</label>
-      <input id="gUser" placeholder="мысалы: semei123">
-      <label>Репозиторий аты</label>
-      <input id="gRepo" placeholder="мысалы: tests">
-      <label>Тармақ (branch)</label>
-      <input id="gBranch" value="main">
-      <label>Токен (fine-grained, Contents: Read and write)</label>
-      <input id="gToken" type="password" placeholder="github_pat_...">
-      <label style="display:flex;align-items:center;gap:8px;margin-top:14px;color:var(--text)">
-        <input type="checkbox" id="gAuto" style="width:auto"> Файл енгізгенде сілтемені бірден жасау
-      </label>
-      <div class="row" style="align-items:center"><button id="btnSave">Сақтау</button><span id="saveMsg" class="ok"></span></div>
-      <div class="hint">Токен тек осы браузерде сақталады және тек github.com-ға жіберіледі. Токенді тек осы бір репоға, тек «Contents» рұқсатымен жасаңыз.</div>
-    </details>
+  <!-- ============ 3. СІЛТЕМЕЛЕР ============ -->
+  <div id="p_links" class="panel">
+    <div class="card">
+      <div class="row" style="justify-content:space-between;margin-bottom:8px">
+        <h3 style="margin:0">📚 Менің тесттерім <span id="l_cnt" class="hint"></span></h3>
+        <div class="row">
+          <button id="l_sync" class="sec sm">↻ Vercel-ден жаңарту</button>
+          <button id="l_refresh" class="sec sm">↻ Жаңарту</button>
+        </div>
+      </div>
+      <div id="l_list" class="hint">Жүктелуде...</div>
+    </div>
+
+    <div class="card">
+      <details>
+        <summary>🔧 Дайын GitHub сілтемесінен қолмен Vercel сілтеме жасау</summary>
+        <label class="fl">GitHub сайтының сілтемесі</label>
+        <input id="l_src" placeholder="https://semei123.github.io/tests/tests/fizika/">
+        <label class="fl">Қалаған ат</label>
+        <input id="l_name" placeholder="fizika">
+        <div class="preview">https://<span id="l_prev">fizika</span>.vercel.app/</div>
+        <div class="row mt"><button id="l_go">Сілтеме жасау</button></div>
+        <div id="l_status" class="status"></div>
+      </details>
+    </div>
+  </div>
+
+  <!-- ============ БАПТАУЛАР ============ -->
+  <div id="p_set" class="panel">
+    <div class="card">
+      <h3>GitHub (тесттер осында сақталады)</h3>
+      <label class="fl">GitHub аккаунт аты (username)</label>
+      <input id="s_gUser" placeholder="мысалы: semei123">
+      <label class="fl">Репозиторий аты</label>
+      <input id="s_gRepo" placeholder="мысалы: tests">
+      <label class="fl">Тармақ (branch)</label>
+      <input id="s_gBranch" value="main">
+      <label class="fl">Токен (fine-grained, Contents: Read and write)</label>
+      <input id="s_gToken" type="password" placeholder="github_pat_...">
+    </div>
+    <div class="card">
+      <h3>Vercel (қысқа сілтеме үшін)</h3>
+      <label class="fl">Vercel токен (vercel.com/account/tokens, Scope: All Projects)</label>
+      <input id="s_vToken" type="password" placeholder="токен">
+      <label class="fl">Team ID (жеке аккаунт болса, бос қалдырыңыз)</label>
+      <input id="s_vTeam" placeholder="team_...">
+    </div>
+    <div class="card">
+      <label class="chk" style="margin-top:0"><input type="checkbox" id="s_gAuto"> Файл енгізгенде сілтемені бірден жасау</label>
+      <div class="row mt"><button id="s_save">Сақтау</button><span id="s_msg" class="ok"></span></div>
+      <div class="hint" style="margin-top:10px">Токендер тек осы браузерде сақталады және тек github.com мен vercel.com-ға жіберіледі. GitHub токенін тек осы бір репоға, тек «Contents» рұқсатымен жасаңыз.</div>
+    </div>
   </div>
 </div>
 
-<div id="qrModal" class="modal hidden">
+<div id="q_modal" class="modal hidden">
   <div class="box">
-    <b id="qrTitle"></b>
-    <div><div id="qrBox"></div></div>
-    <div id="qrUrl" class="hint" style="word-break:break-all"></div>
-    <div class="row" style="justify-content:center">
-      <button id="qrDl">⬇ PNG жүктеу</button>
-      <button id="qrClose" class="sec">Жабу</button>
+    <b id="q_title"></b>
+    <div><div id="q_box"></div></div>
+    <div id="q_url" class="hint" style="word-break:break-all"></div>
+    <div class="row mt" style="justify-content:center">
+      <button id="q_dl">⬇ PNG жүктеу</button>
+      <button id="q_close" class="sec">Жабу</button>
     </div>
   </div>
 </div>
@@ -122,11 +238,151 @@ const R='http://schemas.openxmlformats.org/officeDocument/2006/relationships';
 const MIME={png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg',gif:'image/gif',webp:'image/webp',svg:'image/svg+xml',bmp:'image/bmp'};
 const $=id=>document.getElementById(id);
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-let builtQs=null, builtName='test', pollId=0;
+const rand4=()=>Math.random().toString(36).slice(2,6);
+const norm=u=>(u||'').replace(/\/+$/,'');
 
-function setStatus(msg,cls){ $('status').className='status '+(cls||''); $('status').textContent=msg; }
+// ---------- ортақ көмекшілер ----------
+const TR={а:'a',ә:'a',б:'b',в:'v',г:'g',ғ:'g',д:'d',е:'e',ё:'e',ж:'zh',з:'z',и:'i',й:'i',к:'k',қ:'k',л:'l',м:'m',н:'n',ң:'n',о:'o',ө:'o',п:'p',р:'r',с:'s',т:'t',у:'u',ұ:'u',ү:'u',ф:'f',х:'h',һ:'h',ц:'c',ч:'ch',ш:'sh',щ:'sh',ы:'y',і:'i',э:'e',ю:'yu',я:'ya'};
+function slug(s){
+  const t=Array.from(String(s).toLowerCase()).map(ch=>TR[ch]!==undefined?TR[ch]:ch).join('')
+    .replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,50).replace(/-+$/,'');
+  return t||'test';
+}
+function b64(s){ return btoa(unescape(encodeURIComponent(s))); }
+function toBase64(str){
+  return new Promise((res,rej)=>{
+    const r=new FileReader();
+    r.onload=()=>res(r.result.split(',')[1]);
+    r.onerror=()=>rej(new Error('Кодтау қатесі'));
+    r.readAsDataURL(new Blob([str],{type:'text/html'}));
+  });
+}
+async function copyText(t,btn){
+  try{ await navigator.clipboard.writeText(t); if(btn){ const o=btn.textContent; btn.textContent='✓'; setTimeout(()=>btn.textContent=o,1200); } }
+  catch(e){ prompt('Сілтеме:',t); }
+}
+function switchTab(id){
+  document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.tab===id));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on',p.id==='p_'+id));
+  if(id==='links') refreshLinks();
+}
+document.querySelectorAll('.tab').forEach(b=>{ b.onclick=()=>switchTab(b.dataset.tab); });
 
-// ---------- docx ----------
+// ---------- баптаулар ----------
+const FIELDS=['gUser','gRepo','gBranch','gToken','vToken','vTeam'];
+function loadSettings(){
+  try{
+    for(const k of FIELDS){ const v=localStorage.getItem('qtion_'+k); if(v) $('s_'+k).value=v; }
+    $('s_gAuto').checked=localStorage.getItem('qtion_gAuto')==='1';
+    $('m_useV').checked=localStorage.getItem('qtion_useV')!=='0';
+  }catch(e){}
+}
+function saveSettings(){
+  try{
+    for(const k of FIELDS) localStorage.setItem('qtion_'+k,$('s_'+k).value.trim());
+    localStorage.setItem('qtion_gAuto',$('s_gAuto').checked?'1':'0');
+  }catch(e){}
+  $('s_msg').textContent='✅ Сақталды'; setTimeout(()=>$('s_msg').textContent='',3000);
+  syncVercel(true);
+}
+const gcfg=()=>({user:$('s_gUser').value.trim(),repo:$('s_gRepo').value.trim(),branch:$('s_gBranch').value.trim()||'main',token:$('s_gToken').value.trim()});
+const vcfg=()=>({token:$('s_vToken').value.trim(),team:$('s_vTeam').value.trim()});
+const hasGH=()=>{ const c=gcfg(); return !!(c.user&&c.repo&&c.token); };
+const hasVC=()=>!!vcfg().token;
+$('s_save').onclick=saveSettings;
+$('m_useV').onchange=()=>{ try{ localStorage.setItem('qtion_useV',$('m_useV').checked?'1':'0'); }catch(e){} };
+
+// ---------- GitHub ----------
+const gapi=c=>`https://api.github.com/repos/${c.user}/${c.repo}`;
+const ghdr=c=>({'Authorization':'Bearer '+c.token,'Accept':'application/vnd.github+json'});
+function siteBase(c){ return c.repo.toLowerCase()===(c.user+'.github.io').toLowerCase()?`https://${c.user}.github.io`:`https://${c.user}.github.io/${c.repo}`; }
+const testUrl=(c,name)=>`${siteBase(c)}/tests/${name}/`;
+async function ghErr(res){ let m=''; try{ m=(await res.json()).message; }catch(e){} return `GitHub ${res.status}: ${m||'белгісіз қате'}`; }
+
+async function ghDeleteTest(name){
+  const c=gcfg(), u=`${gapi(c)}/contents/tests/${name}/index.html`;
+  const g=await fetch(`${u}?ref=${encodeURIComponent(c.branch)}`,{headers:ghdr(c),cache:'no-store'});
+  if(!g.ok) throw new Error('Файл табылмады ('+g.status+')');
+  const sha=(await g.json()).sha;
+  const d=await fetch(u,{method:'DELETE',headers:{...ghdr(c),'Content-Type':'application/json'},body:JSON.stringify({message:'Delete test '+name,sha,branch:c.branch})});
+  if(!d.ok) throw new Error(await ghErr(d));
+}
+
+// ---------- Vercel ----------
+const VAPI='https://api.vercel.com', LS='qtion_links';
+const vq=c=>c.team?`?teamId=${encodeURIComponent(c.team)}`:'';
+const vhdr=c=>({'Authorization':'Bearer '+c.token,'Content-Type':'application/json'});
+const getLinks=()=>{ try{ return JSON.parse(localStorage.getItem(LS)||'[]'); }catch(e){ return []; } };
+const setLinks=a=>{ try{ localStorage.setItem(LS,JSON.stringify(a)); }catch(e){} };
+function upsertLink(x){ setLinks([x,...getLinks().filter(l=>l.name!==x.name)]); }
+
+// GitHub сайтына бағыттайтын NAME.vercel.app жасайды
+async function vercelCreate(name,src){
+  const c=vcfg(), s=norm(src);
+  const body={
+    name, target:'production',
+    files:[
+      {file:'vercel.json',data:b64(JSON.stringify({rewrites:[{source:'/(.*)',destination:s+'/$1'}]})),encoding:'base64'},
+      {file:'empty.txt',data:b64('.'),encoding:'base64'}
+    ],
+    projectSettings:{framework:null},
+    meta:{qtion:'1',src:s}
+  };
+  const r=await fetch(`${VAPI}/v13/deployments${vq(c)}`,{method:'POST',headers:vhdr(c),body:JSON.stringify(body)});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok) throw new Error(`Vercel ${r.status}: ${(j.error&&j.error.message)||'белгісіз қате'}`);
+  const al=j.alias||[];
+  const host=al.find(a=>a===name+'.vercel.app')||al.find(a=>a.endsWith('.vercel.app'))||name+'.vercel.app';
+  const url='https://'+host+'/';
+  upsertLink({name,url,src:s});
+  return url;
+}
+async function vercelDelete(name){
+  const c=vcfg();
+  const d=await fetch(`${VAPI}/v9/projects/${encodeURIComponent(name)}${vq(c)}`,{method:'DELETE',headers:vhdr(c)});
+  if(!d.ok&&d.status!==404){ let m=''; try{ m=(await d.json()).error.message; }catch(e){} throw new Error(`Vercel ${d.status}: ${m}`); }
+  setLinks(getLinks().filter(x=>x.name!==name));
+}
+// Vercel-де осы құрал жасаған жобаларды тізімге қосады
+async function syncVercel(auto){
+  if(!hasVC()){ if(!auto) alert('Алдымен Баптаулар бөлімінде Vercel токенін сақтаңыз.'); return; }
+  const c=vcfg(); $('l_sync').disabled=true;
+  try{
+    const r=await fetch(`${VAPI}/v6/deployments${vq(c)}${c.team?'&':'?'}meta-qtion=1&limit=100`,{headers:vhdr(c)});
+    const j=await r.json();
+    if(!r.ok) throw new Error((j.error&&j.error.message)||r.status);
+    const l=getLinks(), have=new Set(l.map(x=>x.name));
+    for(const d of (j.deployments||[])){
+      if(!d.name||have.has(d.name)) continue;
+      have.add(d.name);
+      l.push({name:d.name,url:'https://'+d.name+'.vercel.app/',src:(d.meta&&d.meta.src)||''});
+    }
+    setLinks(l);
+    if(!auto||$('p_links').classList.contains('on')) refreshLinks();
+  }catch(e){ if(!auto) alert('Жаңарту қатесі: '+e.message); }
+  $('l_sync').disabled=false;
+}
+
+// ---------- QR ----------
+function showQR(url,name){
+  const box=$('q_box'); box.innerHTML='';
+  new QRCode(box,{text:url,width:240,height:240,correctLevel:QRCode.CorrectLevel.M});
+  $('q_title').textContent=name; $('q_url').textContent=url;
+  $('q_modal').classList.remove('hidden'); $('q_modal').dataset.name=name;
+}
+$('q_close').onclick=()=>$('q_modal').classList.add('hidden');
+$('q_modal').onclick=e=>{ if(e.target===$('q_modal')) $('q_modal').classList.add('hidden'); };
+$('q_dl').onclick=()=>{
+  const src=$('q_box').querySelector('canvas'); if(!src) return;
+  const m=24, cv=document.createElement('canvas'); cv.width=src.width+2*m; cv.height=src.height+2*m;
+  const ctx=cv.getContext('2d'); ctx.fillStyle='#fff'; ctx.fillRect(0,0,cv.width,cv.height); ctx.drawImage(src,m,m);
+  const a=document.createElement('a'); a.href=cv.toDataURL('image/png'); a.download='qr-'+($('q_modal').dataset.name||'test')+'.png'; a.click();
+};
+
+// ================= 2. ТЕСТ ЖАСАУ =================
+let built=null, builtName='test', pollId=0;
+function mStatus(msg,cls){ $('m_status').className='status '+(cls||''); $('m_status').textContent=msg; }
+
 async function parseDocx(file){
   const zip=await JSZip.loadAsync(file);
   const docFile=zip.file('word/document.xml');
@@ -198,179 +454,737 @@ async function parseDocx(file){
   return questions;
 }
 
-function title(){ return $('tName').value.trim()||builtName; }
+
+
+function title(){ return $('m_tName').value.trim()||builtName; }
 function currentHtml(){
   const esc=s=>JSON.stringify(s).replace(/<\//g,'<\\/');
-  return TPL.replace('__TITLE_JSON__',()=>esc(title())).replace('__QUIZ_JSON__',()=>esc(builtQs));
+  return TPL.replace('__TITLE_JSON__',()=>esc(title())).replace('__QUIZ_JSON__',()=>esc(built));
 }
+function updatePreview(){
+  const raw=$('m_vname').value.trim();
+  $('m_vprev').textContent=raw?slug(raw):slug(title());
+}
+$('m_tName').oninput=updatePreview;
+$('m_vname').oninput=updatePreview;
 
-async function handleFile(file){
+function builtReady(msg){
+  $('m_linkBox').classList.add('hidden'); pollId++;
+  $('m_result').classList.remove('hidden');
+  updatePreview();
+  mStatus(msg,'ok');
+  if($('s_gAuto').checked && hasGH()) publish();
+}
+window.QMaker={
+  load(qs,name){
+    built=qs; builtName=name||'test';
+    switchTab('make');
+    builtReady(`✅ ${qs.length} сұрақ дайын. Суреті бар сұрақтар: ${qs.filter(x=>x.image).length}`);
+  }
+};
+
+async function handleMakerFile(file){
   if(!file) return;
-  if(!/\.docx$/i.test(file.name)){ setStatus('Тек .docx файл қабылданады.','err'); return; }
-  $('result').classList.add('hidden'); $('linkBox').classList.add('hidden'); pollId++;
-  setStatus('Оқып жатыр...');
+  if(!/\.docx$/i.test(file.name)){ mStatus('Тек .docx файл қабылданады.','err'); return; }
+  $('m_result').classList.add('hidden'); pollId++;
+  mStatus('Оқып жатыр...');
   try{
     const qs=await parseDocx(file);
-    if(!qs.length){ setStatus('Ешқандай сұрақ табылмады. <question> белгілерін тексеріңіз.','err'); return; }
-    builtQs=qs; builtName=file.name.replace(/\.docx$/i,'');
-    setStatus(`✅ ${qs.length} сұрақ өңделді. Суреті бар сұрақтар: ${qs.filter(x=>x.image).length}`,'ok');
-    $('result').classList.remove('hidden');
-    if($('gAuto').checked && hasSettings()) publish();
-  }catch(e){ console.error(e); setStatus('Қате: '+e.message,'err'); }
-}
-
-// ---------- GitHub ----------
-const KEYS=['gUser','gRepo','gBranch','gToken'];
-function cfg(){ return {user:$('gUser').value.trim(),repo:$('gRepo').value.trim(),branch:$('gBranch').value.trim()||'main',token:$('gToken').value.trim()}; }
-function hasSettings(){ const c=cfg(); return c.user&&c.repo&&c.token; }
-const api=c=>`https://api.github.com/repos/${c.user}/${c.repo}`;
-const hdr=c=>({'Authorization':'Bearer '+c.token,'Accept':'application/vnd.github+json'});
-function siteBase(c){ return c.repo.toLowerCase()===(c.user+'.github.io').toLowerCase()?`https://${c.user}.github.io`:`https://${c.user}.github.io/${c.repo}`; }
-const testUrl=(c,name)=>`${siteBase(c)}/tests/${name}/`;
-
-function loadSettings(){
-  try{
-    for(const k of KEYS){ const v=localStorage.getItem('qtion_'+k); if(v) $(k).value=v; }
-    $('gAuto').checked=localStorage.getItem('qtion_gAuto')==='1';
-  }catch(e){}
-  if(!hasSettings()) $('settings').open=true;
-}
-function saveSettings(){
-  try{
-    for(const k of KEYS) localStorage.setItem('qtion_'+k,$(k).value.trim());
-    localStorage.setItem('qtion_gAuto',$('gAuto').checked?'1':'0');
-  }catch(e){}
-  $('saveMsg').textContent='✅ Сақталды';
-  setTimeout(()=>$('saveMsg').textContent='',3000);
-  loadList();
-}
-
-const TR={а:'a',ә:'a',б:'b',в:'v',г:'g',ғ:'g',д:'d',е:'e',ё:'e',ж:'zh',з:'z',и:'i',й:'i',к:'k',қ:'k',л:'l',м:'m',н:'n',ң:'n',о:'o',ө:'o',п:'p',р:'r',с:'s',т:'t',у:'u',ұ:'u',ү:'u',ф:'f',х:'h',һ:'h',ц:'c',ч:'ch',ш:'sh',щ:'sh',ы:'y',і:'i',э:'e',ю:'yu',я:'ya'};
-function slug(s){
-  const t=Array.from(s.toLowerCase()).map(ch=>TR[ch]!==undefined?TR[ch]:ch).join('')
-    .replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,50).replace(/-+$/,'');
-  return t||'test';
-}
-function toBase64(str){
-  return new Promise((res,rej)=>{
-    const r=new FileReader();
-    r.onload=()=>res(r.result.split(',')[1]);
-    r.onerror=()=>rej(new Error('Кодтау қатесі'));
-    r.readAsDataURL(new Blob([str],{type:'text/html'}));
-  });
+    if(!qs.length){ mStatus('Ешқандай сұрақ табылмады. <question> белгілерін тексеріңіз немесе «1 · Файл дайындау» бөлімін қолданыңыз.','err'); return; }
+    built=qs; builtName=file.name.replace(/\.docx$/i,'');
+    builtReady(`✅ ${qs.length} сұрақ өңделді. Суреті бар сұрақтар: ${qs.filter(x=>x.image).length}`);
+  }catch(e){ console.error(e); mStatus('Қате: '+e.message,'err'); }
 }
 
 async function publish(){
-  if(!builtQs){ setStatus('Алдымен файл енгізіңіз.','err'); return; }
-  if(!hasSettings()){ $('settings').open=true; setStatus('GitHub баптауларын толтырыңыз.','err'); return; }
-  const c=cfg(); const base=slug(title());
-  setStatus('GitHub-қа жүктеп жатыр...');
+  if(!built){ mStatus('Алдымен файл енгізіңіз.','err'); return; }
+  if(!hasGH()){ switchTab('set'); alert('Алдымен GitHub баптауларын толтырып, «Сақтау» басыңыз.'); return; }
+  const c=gcfg(), base=slug(title());
+  $('m_btnPub').disabled=true;
+  mStatus('GitHub-қа жүктеп жатыр...');
   try{
     const content=await toBase64(currentHtml());
     let name=base, res=null;
     for(let i=0;i<4;i++){
-      res=await fetch(`${api(c)}/contents/tests/${name}/index.html`,{
-        method:'PUT',headers:{...hdr(c),'Content-Type':'application/json'},
+      res=await fetch(`${gapi(c)}/contents/tests/${name}/index.html`,{
+        method:'PUT',headers:{...ghdr(c),'Content-Type':'application/json'},
         body:JSON.stringify({message:'Add test '+name,content,branch:c.branch})
       });
-      if(res.status===422){ name=base+'-'+Math.random().toString(36).slice(2,6); continue; }
+      if(res.status===422){ name=base+'-'+rand4(); continue; }
       break;
     }
-    if(!res.ok){
-      let m=''; try{ m=(await res.json()).message; }catch(e){}
-      throw new Error(`GitHub ${res.status}: ${m||'белгісіз қате'}`);
+    if(!res.ok) throw new Error(await ghErr(res));
+    const ghUrl=testUrl(c,name);
+    $('m_ghInp').value=ghUrl;
+
+    let vcUrl=null, vcMsg='';
+    if($('m_useV').checked){
+      if(!hasVC()){ vcMsg=' Vercel токені жоқ, сондықтан тек GitHub сілтемесі жасалды (Баптаулар бөлімінде толтырыңыз).'; }
+      else{
+        mStatus('Vercel сілтемесін жасап жатыр...');
+        const raw=$('m_vname').value.trim();
+        let vn=raw?slug(raw):name;
+        const ex=getLinks().find(x=>x.name===vn);
+        if(ex&&norm(ex.src)!==norm(ghUrl)) vn=vn+'-'+rand4();
+        try{ vcUrl=await vercelCreate(vn,ghUrl); }
+        catch(e){ console.error(e); vcMsg=' Vercel қатесі: '+e.message; }
+      }
     }
-    const url=testUrl(c,name);
-    $('linkInp').value=url; $('linkBox').classList.remove('hidden');
-    setStatus('✅ Тест жүктелді. Сілтеме дайын.','ok');
-    loadList();
-    waitReady(url);
-  }catch(e){ console.error(e); setStatus('Қате: '+e.message,'err'); }
+    $('m_linkBox').classList.remove('hidden');
+    if(vcUrl){ $('m_vcInp').value=vcUrl; $('m_vcWrap').classList.remove('hidden'); }
+    else $('m_vcWrap').classList.add('hidden');
+    mStatus('✅ Тест GitHub-қа жүктелді.'+(vcUrl?' Vercel сілтемесі дайын.':'')+vcMsg, vcMsg?'warn':'ok');
+    waitReady(ghUrl,!!vcUrl);
+  }catch(e){ console.error(e); mStatus('Қате: '+e.message,'err'); }
+  $('m_btnPub').disabled=false;
 }
 
-async function waitReady(url){
-  const my=++pollId, el=$('readyMsg'), t0=Date.now();
+async function waitReady(url,hasV){
+  const my=++pollId, el=$('m_ready'), t0=Date.now();
   while(Date.now()-t0<420000){
     if(my!==pollId) return;
     el.className='hint'; el.textContent=`⏳ Сайт жарияланып жатыр... ${Math.round((Date.now()-t0)/1000)} сек`;
-    try{ const r=await fetch(url+'?_='+Date.now(),{cache:'no-store'}); if(r.ok){ el.className='hint ok'; el.textContent='✅ Дайын! Сілтемені студенттерге жібере аласыз.'; return; } }catch(e){}
+    try{ const r=await fetch(url+'?_='+Date.now(),{cache:'no-store'}); if(r.ok){ el.className='hint ok'; el.textContent='✅ Дайын! Сілтемені студенттерге жібере аласыз.'+(hasV?' Vercel сілтемесі ашылмаса, 1 минут күтіңіз.':''); return; } }catch(e){}
     await sleep(5000);
   }
   if(my===pollId){ el.className='hint'; el.textContent='Әлі жарияланбады. Біраз күтіп, сілтемені қолмен ашып көріңіз.'; }
 }
 
-// ---------- тізім ----------
-async function loadList(){
-  const box=$('listBox');
-  if(!hasSettings()){ box.className='hint'; box.textContent='Алдымен GitHub баптауларын толтырып, «Сақтау» басыңыз.'; return; }
-  const c=cfg(); box.className='hint'; box.textContent='Жүктелуде...';
-  try{
-    const r=await fetch(`${api(c)}/contents/tests?ref=${encodeURIComponent(c.branch)}`,{headers:hdr(c),cache:'no-store'});
-    if(r.status===404){ box.textContent='Әзірге тест жоқ.'; return; }
-    if(!r.ok){ let m=''; try{ m=(await r.json()).message; }catch(e){} throw new Error(`GitHub ${r.status}: ${m}`); }
-    const names=(await r.json()).filter(x=>x.type==='dir').map(x=>x.name).sort();
-    if(!names.length){ box.textContent='Әзірге тест жоқ.'; return; }
-    box.className=''; box.innerHTML='';
-    for(const n of names){
-      const url=testUrl(c,n), row=document.createElement('div'); row.className='item';
-      const nm=document.createElement('div'); nm.className='nm'; nm.textContent=n;
-      const sm=document.createElement('small'); sm.textContent=url; nm.appendChild(sm);
-      const bt=document.createElement('div'); bt.className='bt';
-      const open=document.createElement('a'); open.className='btn'; open.href=url; open.target='_blank'; open.rel='noopener'; open.textContent='Ашу';
-      const cp=document.createElement('button'); cp.className='sec sm'; cp.textContent='Көшіру';
-      cp.onclick=async()=>{ try{ await navigator.clipboard.writeText(url); cp.textContent='✓'; setTimeout(()=>cp.textContent='Көшіру',1200); }catch(e){ prompt('Сілтеме:',url); } };
-      const qr=document.createElement('button'); qr.className='sec sm'; qr.textContent='QR'; qr.onclick=()=>showQR(url,n);
-      const del=document.createElement('button'); del.className='danger sm'; del.textContent='Өшіру'; del.onclick=()=>removeTest(n,row);
-      bt.append(open,cp,qr,del); row.append(nm,bt); box.appendChild(row);
-    }
-  }catch(e){ console.error(e); box.className='hint err'; box.textContent='Тізімді алу қатесі: '+e.message; }
+const mDrop=$('m_drop'), mFile=$('m_file');
+mDrop.onclick=()=>mFile.click();
+mFile.onchange=()=>{ handleMakerFile(mFile.files[0]); mFile.value=''; };
+['dragenter','dragover'].forEach(ev=>mDrop.addEventListener(ev,e=>{e.preventDefault();mDrop.classList.add('over');}));
+['dragleave','drop'].forEach(ev=>mDrop.addEventListener(ev,e=>{e.preventDefault();mDrop.classList.remove('over');}));
+mDrop.addEventListener('drop',e=>handleMakerFile(e.dataTransfer.files[0]));
+$('m_btnOpen').onclick=()=>window.open(URL.createObjectURL(new Blob([currentHtml()],{type:'text/html'})),'_blank');
+$('m_btnDl').onclick=()=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([currentHtml()],{type:'text/html'})); a.download='index.html'; a.click(); };
+$('m_btnPub').onclick=publish;
+$('m_vcCopy').onclick=()=>copyText($('m_vcInp').value,$('m_vcCopy'));
+$('m_ghCopy').onclick=()=>copyText($('m_ghInp').value,$('m_ghCopy'));
+$('m_vcQr').onclick=()=>showQR($('m_vcInp').value,title());
+$('m_ghQr').onclick=()=>showQR($('m_ghInp').value,title());
+
+// ================= 3. СІЛТЕМЕЛЕР =================
+function mkBtn(text,cls,fn){ const b=document.createElement('button'); b.className=cls; b.textContent=text; b.onclick=fn; return b; }
+function mkOpen(url){ const a=document.createElement('a'); a.className='btn'; a.href=url; a.target='_blank'; a.rel='noopener'; a.textContent='Ашу'; return a; }
+
+async function listGithubTests(){
+  const c=gcfg();
+  const r=await fetch(`${gapi(c)}/contents/tests?ref=${encodeURIComponent(c.branch)}`,{headers:ghdr(c),cache:'no-store'});
+  if(r.status===404) return [];
+  if(!r.ok) throw new Error(await ghErr(r));
+  return (await r.json()).filter(x=>x.type==='dir').map(x=>x.name).sort();
 }
 
-async function removeTest(name,row){
-  if(!confirm(`«${name}» тестін өшіру керек пе? Сілтеме жұмыс істемейді.`)) return;
-  const c=cfg(); row.style.opacity='.5';
-  try{
-    const u=`${api(c)}/contents/tests/${name}/index.html`;
-    const g=await fetch(`${u}?ref=${encodeURIComponent(c.branch)}`,{headers:hdr(c),cache:'no-store'});
-    if(!g.ok) throw new Error('Файл табылмады ('+g.status+')');
-    const sha=(await g.json()).sha;
-    const d=await fetch(u,{method:'DELETE',headers:{...hdr(c),'Content-Type':'application/json'},body:JSON.stringify({message:'Delete test '+name,sha,branch:c.branch})});
-    if(!d.ok){ let m=''; try{ m=(await d.json()).message; }catch(e){} throw new Error(`GitHub ${d.status}: ${m}`); }
-    loadList();
-  }catch(e){ row.style.opacity='1'; alert('Өшіру қатесі: '+e.message); }
+async function makeVercelFor(name,ghUrl){
+  if(!hasVC()){ switchTab('set'); alert('Алдымен Vercel токенін енгізіп, «Сақтау» басыңыз.'); return; }
+  const input=prompt('Vercel сайт аты (мысалы: fizika):',name); if(input===null) return;
+  const vn=slug(input);
+  const ex=getLinks().find(x=>x.name===vn);
+  if(ex&&norm(ex.src)!==norm(ghUrl)&&!confirm(`«${vn}.vercel.app» басқа сілтемеге бағыттап тұр. Оны осы тестке ауыстыру керек пе?`)) return;
+  try{ await vercelCreate(vn,ghUrl); refreshLinks(); }
+  catch(e){ alert('Қате: '+e.message); }
 }
 
-// ---------- QR ----------
-function showQR(url,name){
-  const box=$('qrBox'); box.innerHTML='';
-  new QRCode(box,{text:url,width:240,height:240,correctLevel:QRCode.CorrectLevel.M});
-  $('qrTitle').textContent=name; $('qrUrl').textContent=url;
-  $('qrModal').classList.remove('hidden'); $('qrModal').dataset.name=name;
+async function refreshLinks(){
+  const box=$('l_list'), links=getLinks(), used=new Set();
+  let tests=[], err='';
+  if(hasGH()){
+    box.className='hint'; box.textContent='Жүктелуде...';
+    try{ tests=await listGithubTests(); }catch(e){ console.error(e); err='GitHub тізімін алу қатесі: '+e.message; }
+  }
+  box.innerHTML=''; box.className='';
+  const rows=[];
+  const c=gcfg();
+  for(const n of tests){
+    const gh=testUrl(c,n);
+    const v=links.find(x=>norm(x.src)===norm(gh))||links.find(x=>!x.src&&x.name===n);
+    if(v) used.add(v.name);
+    rows.push({kind:'test',name:n,gh,v});
+  }
+  for(const v of links){ if(!used.has(v.name)) rows.push({kind:'vc',name:v.name,v}); }
+
+  $('l_cnt').textContent=rows.length?`(${rows.length})`:'';
+  if(err){ const d=document.createElement('div'); d.className='hint err'; d.textContent=err; box.appendChild(d); }
+  if(!rows.length){
+    const d=document.createElement('div'); d.className='hint';
+    d.textContent=hasGH()||hasVC()?'Әзірге тест жоқ.':'Алдымен «Баптаулар» бөлімінде GitHub және Vercel токендерін толтырып, «Сақтау» басыңыз.';
+    box.appendChild(d); return;
+  }
+  for(const it of rows){
+    const row=document.createElement('div'); row.className='item';
+    const nm=document.createElement('div'); nm.className='nm';
+    const main=it.v?it.v.url:it.gh;
+    nm.appendChild(document.createTextNode(it.kind==='test'?it.name:it.v.name));
+    const tag=document.createElement('span'); tag.className='tag'; tag.textContent=it.v?'Vercel':'GitHub'; nm.appendChild(tag);
+    const sm=document.createElement('small'); sm.textContent=main; nm.appendChild(sm);
+    if(it.kind==='test'&&it.v){ const s2=document.createElement('small'); s2.textContent='GitHub: '+it.gh; nm.appendChild(s2); }
+    if(it.kind==='vc'&&it.v.src){ const s2=document.createElement('small'); s2.textContent='→ '+it.v.src; nm.appendChild(s2); }
+    const bt=document.createElement('div'); bt.className='bt';
+    bt.appendChild(mkOpen(main));
+    const cp=mkBtn('Көшіру','sec sm',()=>copyText(main,cp)); bt.appendChild(cp);
+    bt.appendChild(mkBtn('QR','sec sm',()=>showQR(main,it.name)));
+    if(it.kind==='test'&&!it.v) bt.appendChild(mkBtn('Vercel жасау','sec sm',()=>makeVercelFor(it.name,it.gh)));
+    if(it.kind==='test'&&it.v) bt.appendChild(mkBtn('Vercel-ді өшіру','danger sm',async()=>{
+      if(!confirm(`${it.v.url} сілтемесін өшіру керек пе? GitHub-тағы тест қалады.`)) return;
+      row.style.opacity='.5';
+      try{ await vercelDelete(it.v.name); refreshLinks(); }catch(e){ row.style.opacity='1'; alert('Өшіру қатесі: '+e.message); }
+    }));
+    bt.appendChild(mkBtn('Өшіру','danger sm',async()=>{
+      const both=it.kind==='test'&&it.v;
+      const msg=it.kind==='vc'?`${it.v.url} сілтемесін өшіру керек пе?`:`«${it.name}» тестін өшіру керек пе?${both?' Vercel сілтемесі де өшеді.':''} Сілтеме жұмыс істемейді.`;
+      if(!confirm(msg)) return;
+      row.style.opacity='.5';
+      try{
+        if(it.kind==='test') await ghDeleteTest(it.name);
+        if(it.v){ try{ await vercelDelete(it.v.name); }catch(e){ alert('Vercel жобасы өшпеді: '+e.message); } }
+        refreshLinks();
+      }catch(e){ row.style.opacity='1'; alert('Өшіру қатесі: '+e.message); }
+    }));
+    row.append(nm,bt); box.appendChild(row);
+  }
 }
-$('qrClose').onclick=()=>$('qrModal').classList.add('hidden');
-$('qrModal').onclick=e=>{ if(e.target===$('qrModal')) $('qrModal').classList.add('hidden'); };
-$('qrDl').onclick=()=>{
-  const src=$('qrBox').querySelector('canvas'); if(!src) return;
-  const m=24, cv=document.createElement('canvas'); cv.width=src.width+2*m; cv.height=src.height+2*m;
-  const ctx=cv.getContext('2d'); ctx.fillStyle='#fff'; ctx.fillRect(0,0,cv.width,cv.height); ctx.drawImage(src,m,m);
-  const a=document.createElement('a'); a.href=cv.toDataURL('image/png'); a.download='qr-'+($('qrModal').dataset.name||'test')+'.png'; a.click();
+$('l_refresh').onclick=refreshLinks;
+$('l_sync').onclick=()=>syncVercel(false);
+
+// қолмен сілтеме жасау
+$('l_name').oninput=()=>{ $('l_prev').textContent=$('l_name').value.trim()?slug($('l_name').value):'fizika'; };
+function lStatus(m,cls){ $('l_status').className='status '+(cls||''); $('l_status').textContent=m; }
+$('l_go').onclick=async()=>{
+  const src=$('l_src').value.trim(), raw=$('l_name').value.trim();
+  if(!hasVC()){ switchTab('set'); alert('Алдымен Vercel токенін енгізіп, «Сақтау» басыңыз.'); return; }
+  if(!/^https:\/\/.+/i.test(src)) return lStatus('GitHub сілтемесі https:// деп басталуы керек.','err');
+  if(!raw) return lStatus('Атын жазыңыз (мысалы: fizika).','err');
+  const name=slug(raw);
+  const ex=getLinks().find(x=>x.name===name);
+  if(ex&&norm(ex.src)!==norm(src)&&!confirm(`«${name}.vercel.app» басқа сілтемеге бағыттап тұр. Ауыстыру керек пе?`)) return;
+  $('l_go').disabled=true; lStatus('Жасап жатыр...');
+  try{
+    const url=await vercelCreate(name,src);
+    lStatus('✅ Дайын: '+url+'  (1 минутқа дейін жарияланады)','ok');
+    refreshLinks();
+  }catch(e){ console.error(e); lStatus('Қате: '+e.message,'err'); }
+  $('l_go').disabled=false;
 };
-$('btnQrNew').onclick=()=>showQR($('linkInp').value,title());
 
-// ---------- UI ----------
-const drop=$('drop'), fileInp=$('file');
-drop.onclick=()=>fileInp.click();
-fileInp.onchange=()=>{ handleFile(fileInp.files[0]); fileInp.value=''; };
+// ---------- іске қосу ----------
+loadSettings();
+if(!hasGH()&&!hasVC()) switchTab('set');
+syncVercel(true);
+
+// ================= 1. ФАЙЛ ДАЙЫНДАУ =================
+(function(){
+
+// ===== Таза логика: параграфтар тізімінен сұрақтар жасайды =====
+// para = { text: string, imgs: [dataUrl], marks: ['b','u','h','c:FF0000'] }
+const CYR = '\u0410\u0411\u0412\u0413\u0414\u0415';           // А Б В Г Д Е
+const LOOK = { '\u0410': 0, '\u0412': 1, '\u0421': 2, '\u0415': 4 }; // кирил А В С Е = латын A B C E
+const LET = 'A-Fa-f\\u0410-\\u0415\\u0430-\\u0435';
+const LETTER_RE = new RegExp('^[\\(\\[]?([' + LET + '])(?:[\\)\\]]\\s*|[\\.:]\\s+|[\\.:]$)(.*)$', 's');
+const DIGIT_RE = /^[\(\[]?(\d{1,2})(?:[\)\]]\s*|\.\s+|\.$)(.*)$/s;
+const QNUM_RE = /^\s*(?:№\s*)?(\d{1,3})\s*[\.\)\-:]\s*/;
+const KEY_HEAD = /^(жауап|ответ|answer|кілт|key)/i;
+
+function letterCands(ch) {
+  const u = ch.toUpperCase(), s = new Set();
+  const a = 'ABCDEF'.indexOf(u); if (a >= 0) s.add(a);
+  const b = CYR.indexOf(u); if (b >= 0) s.add(b);
+  if (LOOK[u] !== undefined) s.add(LOOK[u]);
+  return s;
+}
+
+function keyPairs(text) {
+  const out = [];
+  const re1 = /(\d{1,3})\s*[-\u2013\u2014:.)=]\s*([A-Za-z\u0400-\u04FF]|\d)(?![\dA-Za-z\u0400-\u04FF])/g;
+  let rest = text.replace(re1, (m, n, a) => { out.push([parseInt(n, 10), a]); return ' '; });
+  const re2 = /(\d{1,3})([A-Fa-f\u0410-\u0415\u0430-\u0435])(?![A-Za-z\u0400-\u04FF])/g;
+  rest = rest.replace(re2, (m, n, a) => { out.push([parseInt(n, 10), a]); return ' '; });
+  return { pairs: out, rest };
+}
+function isPureKeyLine(text, minPairs) {
+  const { pairs, rest } = keyPairs(text);
+  return pairs.length >= minPairs && /^[\s,;.]*$/.test(rest);
+}
+
+function stripCorrectSymbols(t) {
+  let mark = false;
+  let m = t.match(/^([\*\u2713\u2714]|\+(?=\s))\s*(.*)$/s);
+  if (m) { mark = true; t = m[2]; }
+  return { t, mark };
+}
+function stripTrailing(t) {
+  const m = t.match(/^(.*?)\s*(?:\(\+\)|\s[\*\+\u2713\u2714]|\*)\s*$/s);
+  if (m && m[1] !== t.trim()) return { t: m[1], mark: true };
+  return { t, mark: false };
+}
+
+function structure(paras, mode, correctFirst) {
+  mode = mode || 'auto';
+  const qs = [];
+  let cur = null, keyMode = false;
+  const keys = new Map();
+
+  const nextText = i => {
+    for (let j = i + 1; j < paras.length; j++) {
+      const t = (paras[j].text || '').trim();
+      if (t || (paras[j].imgs && paras[j].imgs.length)) return t;
+    }
+    return null;
+  };
+  const isFirstOpt = t => {
+    let m = t.match(DIGIT_RE); if (m && parseInt(m[1], 10) === 1) return true;
+    m = t.match(LETTER_RE); if (m && letterCands(m[1]).has(0)) return true;
+    return false;
+  };
+  const addKeys = text => { for (const [n, a] of keyPairs(text).pairs) keys.set(n, a); };
+  const newQ = (text, img) => {
+    let qnum = null;
+    const m = text.match(QNUM_RE);
+    if (m) { qnum = parseInt(m[1], 10); text = text.slice(m[0].length); }
+    cur = { text: text.trim(), image: img || null, options: [], kind: null, qnum: qnum, order: qs.length + 1 };
+    qs.push(cur);
+  };
+
+  for (let i = 0; i < paras.length; i++) {
+    const p = paras[i];
+    const text = (p.text || '').replace(/\s+/g, ' ').trim();
+    const imgs = p.imgs || [];
+    if (!text && !imgs.length) continue;
+
+    if (keyMode) { addKeys(text); continue; }
+    if (qs.length && text && ((KEY_HEAD.test(text) && text.length < 60) || isPureKeyLine(text, 2))) {
+      keyMode = true; addKeys(text); continue;
+    }
+
+    if (!text) { // тек сурет
+      if (!cur) continue;
+      if (cur.options.length === 0) { if (!cur.image) cur.image = imgs[0]; }
+      else { const lo = cur.options[cur.options.length - 1]; if (!lo.image) lo.image = imgs[0]; }
+      continue;
+    }
+
+    // нұсқа ма?
+    let lead = stripCorrectSymbols(text);
+    let t = lead.t, isOpt = false, label = '', optText = '';
+    if (cur) {
+      if (mode !== 'digits' && cur.kind !== 'digit') {
+        const m = t.match(LETTER_RE);
+        if (m && letterCands(m[1]).has(cur.options.length)) {
+          isOpt = true; label = 'ABCDEF'[cur.options.length]; optText = m[2]; cur.kind = 'letter';
+        }
+      }
+      if (!isOpt && mode !== 'letters' && cur.kind !== 'letter') {
+        const m = t.match(DIGIT_RE);
+        if (m) {
+          const N = parseInt(m[1], 10), exp = cur.options.length + 1;
+          if (N === exp && N <= 8 && cur.text) {
+            let ok = true;
+            if (cur.options.length >= 1) {
+              const nx = nextText(i);
+              if (nx !== null && isFirstOpt(nx)) ok = false;
+            }
+            if (ok) { isOpt = true; label = String(N); optText = m[2]; cur.kind = 'digit'; }
+          }
+        }
+      }
+    }
+    if (isOpt) {
+      const lead2 = stripCorrectSymbols(optText);
+      const tr = stripTrailing(lead2.t);
+      cur.options.push({
+        label: label, text: tr.t.trim(), image: imgs[0] || null,
+        marks: p.marks || [], sym: lead.mark || lead2.mark || tr.mark
+      });
+      continue;
+    }
+
+    // оған қосылмайтын жол
+    if (!cur) { newQ(text, imgs[0]); continue; }
+    if (cur.options.length === 0) { cur.text = (cur.text + ' ' + text).trim(); if (!cur.image && imgs[0]) cur.image = imgs[0]; continue; }
+    if (cur.options.length === 1) { const lo = cur.options[0]; lo.text = (lo.text + ' ' + text).trim(); continue; }
+    newQ(text, imgs[0]);
+  }
+
+  // дұрыс жауапты анықтау
+  const PRIO = ['h', 'u', 'c', 'b'];
+  for (const q of qs) {
+    q.correct = -1; q.source = '';
+    for (const o of q.options) if (!o.text && o.image) o.text = o.label;
+    if (correctFirst && q.options.length) { q.correct = 0; q.source = 'бірінші нұсқа'; continue; }
+    const symIdx = q.options.map((o, i) => o.sym ? i : -1).filter(i => i >= 0);
+    if (symIdx.length >= 1) { q.correct = symIdx[0]; q.source = 'белгі'; continue; }
+    const ans = keys.get(q.qnum != null ? q.qnum : q.order);
+    if (ans !== undefined) {
+      let idx = -1;
+      if (/^\d$/.test(ans)) idx = parseInt(ans, 10) - 1;
+      else { for (const c of letterCands(ans)) { if (c < q.options.length) { idx = c; break; } } }
+      if (idx >= 0 && idx < q.options.length) { q.correct = idx; q.source = 'жауап кілті'; continue; }
+    }
+    if (q.options.length >= 2) {
+      const all = new Set(); q.options.forEach(o => o.marks.forEach(m => all.add(m)));
+      let found = -1;
+      for (const pr of PRIO) {
+        for (const m of all) {
+          if (m !== pr && !m.startsWith(pr + ':')) continue;
+          const holders = q.options.map((o, i) => o.marks.includes(m) ? i : -1).filter(i => i >= 0);
+          if (holders.length === 1) { found = holders[0]; break; }
+        }
+        if (found >= 0) break;
+      }
+      if (found >= 0) { q.correct = found; q.source = 'форматтау'; }
+    }
+  }
+  return qs;
+}
+
+// ===== Бір жолға жабысқан мәтінді бөлу: "...:A) аB) бC) в 2. Келесі сұрақ:A) ..." =====
+const UP = ['A\u0410', 'B\u0411\u0412', 'C\u0412\u0421', 'D\u0413', 'E\u0414\u0415', 'F\u0415'];
+function markerRe(i, kind) {
+  if (kind === 'D') return new RegExp('(?<![\\d.,])' + (i + 1) + '\\)', 'g');
+  const up = UP[i], low = up.toLowerCase();
+  return new RegExp('(?:[' + up + ']|(?<=^|[\\s:;.?!])[' + low + '])\\)', 'g');
+}
+function matchesOf(re, s, from) {
+  re.lastIndex = from || 0; const out = []; let m;
+  while ((m = re.exec(s)) !== null) { out.push({ pos: m.index, len: m[0].length }); if (out.length > 400) break; }
+  return out;
+}
+function findInline(s, st) {
+  for (const kind of ['L', 'D']) {
+    for (const f of matchesOf(markerRe(0, kind), s, 0)) {
+      // келесі сұрақ нөмірі арқылы осы сұрақтың шегін табамыз
+      const qpart = s.slice(0, f.pos).trim();
+      const qm = qpart.match(QNUM_RE);
+      const thisQ = qpart ? (qm ? parseInt(qm[1], 10) : st.lastQ + 1) : st.lastQ;
+      const reNext = new RegExp('(?<![\\d.,])' + (thisQ + 1) + '\\.\\s*(?=[^\\d\\s])', 'g');
+      reNext.lastIndex = f.pos + f.len;
+      const nm = reNext.exec(s);
+      const limit = nm ? nm.index : s.length;
+      const seq = [f]; let from = f.pos + f.len;
+      for (let i = 1; i < 6; i++) {
+        const ms = matchesOf(markerRe(i, kind), s, from).filter(m => m.pos < limit);
+        if (!ms.length) break;
+        const again = matchesOf(markerRe(0, kind), s, from).filter(m => m.pos < limit);
+        if (again.length && again[0].pos < ms[0].pos) break;
+        seq.push(ms[0]); from = ms[0].pos + ms[0].len;
+      }
+      const need = kind === 'L' ? 2 : 3;
+      if (seq.length >= need && (f.pos > 0 || (kind === 'L' && seq.length >= 3))) return { seq, kind, limit, thisQ };
+    }
+  }
+  return null;
+}
+// text -> бірнеше жол. st = {lastQ}
+function explodeLine(text, st) {
+  const out = []; let rest = text;
+  for (let guard = 0; guard < 2000 && rest && rest.trim(); guard++) {
+    const f = findInline(rest, st);
+    if (!f) { out.push(rest.trim()); break; }
+    const seq = f.seq;
+    const qpart = rest.slice(0, seq[0].pos).trim();
+    if (qpart) out.push(qpart);
+    st.lastQ = f.thisQ;
+    for (let k = 0; k < seq.length - 1; k++) {
+      const body = rest.slice(seq[k].pos + seq[k].len, seq[k + 1].pos).trim();
+      out.push((f.kind === 'L' ? 'ABCDEF'[k] : String(k + 1)) + ') ' + body);
+    }
+    const last = seq[seq.length - 1];
+    const lastBody = rest.slice(last.pos + last.len, f.limit).trim();
+    out.push((f.kind === 'L' ? 'ABCDEF'[seq.length - 1] : String(seq.length)) + ') ' + lastBody);
+    rest = f.limit < rest.length ? rest.slice(f.limit) : '';
+  }
+  return out;
+}
+
+
+
+
+const W='http://schemas.openxmlformats.org/wordprocessingml/2006/main';
+const A='http://schemas.openxmlformats.org/drawingml/2006/main';
+const R='http://schemas.openxmlformats.org/officeDocument/2006/relationships';
+const MIME={png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg',gif:'image/gif',webp:'image/webp',svg:'image/svg+xml',bmp:'image/bmp'};
+const $=id=>document.getElementById('o_'+id);
+let paras=null, state=[], srcName='test';
+
+function setStatus(m,c){ $('status').className='status '+(c||''); $('status').textContent=m; }
+
+// ---------- docx оқу ----------
+const dom=s=>new DOMParser().parseFromString(s,'application/xml');
+function fmtNum(n,fmt){
+  const lat=x=>x>=1&&x<=26?String.fromCharCode(64+x):String(x);
+  const cyr='АБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЩЭЮЯ';
+  switch(fmt){
+    case 'upperLetter': return lat(n);
+    case 'lowerLetter': return lat(n).toLowerCase();
+    case 'russianUpper': return cyr[n-1]||String(n);
+    case 'russianLower': return (cyr[n-1]||String(n)).toLowerCase();
+    default: return String(n);
+  }
+}
+async function readNumbering(zip){
+  const f=zip.file('word/numbering.xml'); if(!f) return null;
+  const nd=dom(await f.async('string')), abs={}, num={};
+  for(const a of nd.getElementsByTagNameNS(W,'abstractNum')){
+    const lv={};
+    for(const l of a.getElementsByTagNameNS(W,'lvl')){
+      const g=n=>l.getElementsByTagNameNS(W,n)[0];
+      const st=g('start');
+      lv[l.getAttributeNS(W,'ilvl')]={fmt:g('numFmt')?g('numFmt').getAttributeNS(W,'val'):'decimal',text:g('lvlText')?g('lvlText').getAttributeNS(W,'val'):'%1.',start:st?parseInt(st.getAttributeNS(W,'val'),10):1};
+    }
+    abs[a.getAttributeNS(W,'abstractNumId')]=lv;
+  }
+  for(const n of nd.getElementsByTagNameNS(W,'num')){
+    const a=n.getElementsByTagNameNS(W,'abstractNumId')[0];
+    num[n.getAttributeNS(W,'numId')]=a?a.getAttributeNS(W,'val'):null;
+  }
+  return {abs,num};
+}
+function paraLines(p){
+  const lines=[]; let cur;
+  const start=()=>{ cur={text:'',b:0,u:0,h:0,col:{},len:0}; lines.push(cur); };
+  start();
+  const off=v=>v==='0'||v==='false'||v==='none';
+  for(const r of p.getElementsByTagNameNS(W,'r')){
+    let fb=false,fu=false,fh=false,fc=null;
+    const pr=r.getElementsByTagNameNS(W,'rPr')[0];
+    if(pr){
+      const g=nm=>pr.getElementsByTagNameNS(W,nm)[0];
+      const b=g('b'); fb=!!(b&&!off(b.getAttributeNS(W,'val')));
+      const u=g('u'); fu=!!(u&&!off(u.getAttributeNS(W,'val')));
+      const h=g('highlight'), sh=g('shd');
+      fh=!!((h&&!off(h.getAttributeNS(W,'val')))||(sh&&!['auto','FFFFFF','ffffff',''].includes(sh.getAttributeNS(W,'fill')||'')));
+      const c=g('color'); if(c){ const v=(c.getAttributeNS(W,'val')||'').toUpperCase(); if(v&&v!=='AUTO'&&v!=='000000') fc=v; }
+    }
+    for(const ch of r.childNodes){
+      const n=ch.localName;
+      if(n==='t'||n==='tab'){
+        const t=n==='t'?ch.textContent:' ';
+        cur.text+=t;
+        const k=t.replace(/\s/g,'').length;
+        if(k){ cur.len+=k; if(fb)cur.b+=k; if(fu)cur.u+=k; if(fh)cur.h+=k; if(fc) cur.col[fc]=(cur.col[fc]||0)+k; }
+      } else if(n==='br'||n==='cr'){
+        if(ch.getAttributeNS(W,'type')!=='page') start();
+      }
+    }
+  }
+  return lines.map(l=>{
+    const marks=[];
+    if(l.len){
+      if(l.b/l.len>=.6) marks.push('b'); if(l.u/l.len>=.6) marks.push('u'); if(l.h/l.len>=.6) marks.push('h');
+      for(const v in l.col) if(l.col[v]/l.len>=.6) marks.push('c:'+v);
+    }
+    return {text:l.text,marks};
+  });
+}
+async function readDocx(file){
+  const zip=await JSZip.loadAsync(file);
+  const df=zip.file('word/document.xml'); if(!df) throw new Error('Бұл docx файл емес сияқты.');
+  const dd=dom(await df.async('string')), rels={};
+  const rf=zip.file('word/_rels/document.xml.rels');
+  if(rf) for(const r of dom(await rf.async('string')).getElementsByTagName('Relationship')) rels[r.getAttribute('Id')]=r.getAttribute('Target');
+  const numbering=await readNumbering(zip), counters={}, cache={};
+  async function imagesOf(p){
+    const out=[], ids=[];
+    for(const b of p.getElementsByTagNameNS(A,'blip')){ const id=b.getAttributeNS(R,'embed'); if(id) ids.push(id); }
+    for(const im of p.getElementsByTagName('v:imagedata')){ const id=im.getAttributeNS(R,'id')||im.getAttribute('r:id'); if(id) ids.push(id); }
+    for(const rid of ids){
+      if(!rels[rid]) continue;
+      if(!cache[rid]){
+        let path=rels[rid].replace(/^\//,''); if(!path.startsWith('word/')) path='word/'+path;
+        const f=zip.file(path); if(!f) continue;
+        const ext=path.split('.').pop().toLowerCase();
+        cache[rid]=`data:${MIME[ext]||'image/'+ext};base64,${await f.async('base64')}`;
+      }
+      out.push(cache[rid]);
+    }
+    return out;
+  }
+  function listLabel(p){
+    if(!numbering) return '';
+    const np=p.getElementsByTagNameNS(W,'numPr')[0]; if(!np) return '';
+    const idEl=np.getElementsByTagNameNS(W,'numId')[0], lvEl=np.getElementsByTagNameNS(W,'ilvl')[0];
+    if(!idEl) return '';
+    const numId=idEl.getAttributeNS(W,'val'); if(numId==='0') return '';
+    const il=lvEl?parseInt(lvEl.getAttributeNS(W,'val'),10):0;
+    const lv=(numbering.abs[numbering.num[numId]]||{});
+    const cur=lv[il]; if(!cur||cur.fmt==='bullet') return '';
+    const c=counters[numId]=counters[numId]||[];
+    c[il]=c[il]===undefined?cur.start:c[il]+1;
+    for(let k=il+1;k<c.length;k++) c[k]=undefined;
+    return cur.text.replace(/%(\d)/g,(m,d)=>{ const k=parseInt(d,10)-1; const lk=lv[k]; return c[k]===undefined?'':fmtNum(c[k],lk?lk.fmt:'decimal'); }).trim();
+  }
+  const out=[], st={lastQ:0};
+  for(const p of dd.getElementsByTagNameNS(W,'p')){
+    const imgs=await imagesOf(p);
+    const lab=listLabel(p);
+    const startIdx=out.length;
+    let labelDone=false;
+    for(const L of paraLines(p)){
+      let text=L.text.replace(/\s+/g,' ').trim();
+      if(!text) continue;
+      if(lab&&!labelDone){ text=(lab+' '+text).trim(); labelDone=true; }
+      const parts=explodeLine(text,st);
+      for(const t of parts) out.push({text:t,imgs:[],marks:parts.length===1?L.marks:[]});
+    }
+    if(imgs.length){
+      if(out.length>startIdx) out[startIdx].imgs=imgs;
+      else out.push({text:(lab&&!labelDone)?lab:'',imgs,marks:[]});
+    }
+  }
+  return out;
+}
+
+// ---------- экран ----------
+function reparse(){
+  if(!paras) return;
+  state=structure(paras,$('mode').value,$('ans').value==='first').filter(q=>q.text||q.image||q.options.length);
+  render();
+}
+function render(){
+  $('editor').classList.remove('hidden');
+  const only=$('onlyBad').checked, list=$('list'); list.innerHTML='';
+  const isBadQ=q=>q.correct<0||q.options.length<2||q.text.length>600;
+  const bad=state.filter(isBadQ).length;
+  $('summary').innerHTML=''; 
+  const s=document.createElement('b'); s.textContent=`${state.length} сұрақ табылды. `; $('summary').appendChild(s);
+  const s2=document.createElement('span'); s2.className=bad?'warn':'ok';
+  s2.textContent=bad?`⚠ ${bad} сұрақты тексеру керек (жауабы белгіленбеген немесе нұсқасы аз)`:'✅ Барлығының дұрыс жауабы анықталды'; $('summary').appendChild(s2);
+  state.forEach((q,qi)=>{
+    const isBad=q.correct<0||q.options.length<2||q.text.length>600;
+    if(only&&!isBad) return;
+    const box=document.createElement('div'); box.className='q'+(isBad?' bad':'');
+    const h=document.createElement('div'); h.className='qh';
+    const ht=document.createElement('span'); ht.textContent=`№ ${qi+1}`+(q.correct>=0&&q.source?`  ·  жауап: ${q.source}`:'');
+    const del=document.createElement('button'); del.className='danger sm'; del.textContent='Сұрақты өшіру';
+    del.onclick=()=>{ if(confirm('Бұл сұрақты өшіру керек пе?')){ state.splice(qi,1); render(); } };
+    h.append(ht,del); box.appendChild(h);
+    const ta=document.createElement('textarea'); ta.value=q.text; ta.oninput=()=>{ q.text=ta.value; }; box.appendChild(ta);
+    if(q.image){
+      const im=document.createElement('img'); im.className='thumb'; im.src=q.image; box.appendChild(im);
+      const rm=document.createElement('button'); rm.className='sec sm'; rm.textContent='Суретті алып тастау'; rm.onclick=()=>{ q.image=null; render(); }; box.appendChild(rm);
+    }
+    q.options.forEach((o,oi)=>{
+      const row=document.createElement('div'); row.className='opt'+(q.correct===oi?' right':'');
+      const rd=document.createElement('input'); rd.type='radio'; rd.name='q'+qi; rd.checked=q.correct===oi;
+      rd.onchange=()=>{ q.correct=oi; q.source='қолмен'; render(); };
+      const ctl=document.createElement('div'); ctl.className='ctl';
+      const inp=document.createElement('input'); inp.type='text'; inp.value=o.text; inp.oninput=()=>{ o.text=inp.value; }; ctl.appendChild(inp);
+      if(o.image){ const im=document.createElement('img'); im.className='thumb'; im.src=o.image; ctl.appendChild(im); }
+      const x=document.createElement('button'); x.className='danger sm'; x.textContent='✕'; x.title='Нұсқаны өшіру';
+      x.onclick=()=>{ q.options.splice(oi,1); if(q.correct===oi) q.correct=-1; else if(q.correct>oi) q.correct--; render(); };
+      row.append(rd,ctl,x); box.appendChild(row);
+    });
+    const add=document.createElement('button'); add.className='sec sm'; add.style.marginTop='10px'; add.textContent='+ нұсқа қосу';
+    add.onclick=()=>{ q.options.push({label:'ABCDEF'[q.options.length]||'',text:'',image:null,marks:[],sym:false}); render(); };
+    box.appendChild(add);
+    list.appendChild(box);
+  });
+}
+
+// ---------- docx жазу ----------
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+function imgSize(src){ return new Promise(r=>{ const im=new Image(); im.onload=()=>r({w:im.naturalWidth,h:im.naturalHeight}); im.onerror=()=>r(null); im.src=src; }); }
+function extOf(mime){ return ({'image/png':'png','image/jpeg':'jpeg','image/gif':'gif','image/bmp':'bmp','image/webp':'webp','image/svg+xml':'svg'})[mime]||'png'; }
+
+async function buildDocx(qs){
+  const zip=new JSZip(), media=new Map(); let rels='', body='', did=1;
+  async function drawing(src,maxIn){
+    let m=media.get(src);
+    if(!m){
+      const mt=/^data:([^;]+);base64,(.*)$/.exec(src); if(!mt) return '';
+      const n=media.size+1, ext=extOf(mt[1]);
+      m={rid:'rId'+n,name:`image${n}.${ext}`,ext};
+      media.set(src,m);
+      zip.file('word/media/'+m.name,mt[2],{base64:true});
+      rels+=`<Relationship Id="${m.rid}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/${m.name}"/>`;
+    }
+    const sz=await imgSize(src); let w=sz?sz.w*9525:2743200, h=sz?sz.h*9525:1828800;
+    const max=maxIn*914400; if(w>max){ h=Math.round(h*max/w); w=Math.round(max); }
+    const id=did++;
+    return `<w:r><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="${w}" cy="${h}"/><wp:docPr id="${id}" name="Picture ${id}"/><a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic><pic:nvPicPr><pic:cNvPr id="${id}" name="${m.name}"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="${m.rid}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${w}" cy="${h}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>`;
+  }
+  const para=inner=>`<w:p>${inner}</w:p>`;
+  const txt=t=>`<w:r><w:t xml:space="preserve">${esc(t)}</w:t></w:r>`;
+  for(const q of qs){
+    body+=para(txt('<question>'+q.text));
+    if(q.image) body+=para(await drawing(q.image,4.5));
+    for(let i=0;i<q.options.length;i++){
+      const o=q.options[i]; const t=(o.text||'').trim()||(o.image?('ABCDEF'[i]||String(i+1)):'');
+      if(!t&&!o.image) continue;
+      body+=para(txt((i===q.correct?'<variantright>':'<variant>')+t)+(o.image?await drawing(o.image,2.5):''));
+    }
+  }
+  const NS='xmlns:w="'+W+'" xmlns:r="'+R+'" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:a="'+A+'" xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"';
+  zip.file('[Content_Types].xml','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Default Extension="png" ContentType="image/png"/><Default Extension="jpeg" ContentType="image/jpeg"/><Default Extension="jpg" ContentType="image/jpeg"/><Default Extension="gif" ContentType="image/gif"/><Default Extension="bmp" ContentType="image/bmp"/><Default Extension="webp" ContentType="image/webp"/><Default Extension="svg" ContentType="image/svg+xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>');
+  zip.file('_rels/.rels','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>');
+  zip.file('word/_rels/document.xml.rels','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'+rels+'</Relationships>');
+  zip.file('word/document.xml','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document '+NS+'><w:body>'+body+'<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134" w:header="708" w:footer="708" w:gutter="0"/></w:sectPr></w:body></w:document>');
+  return zip.generateAsync({type:'blob',mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+}
+
+$('btnDocx').onclick=async()=>{
+  let qs=state.filter(q=>q.options.length>=1);
+  const bad=qs.filter(q=>q.correct<0);
+  if(bad.length){
+    if($('skipBad').checked) qs=qs.filter(q=>q.correct>=0);
+    else if(!confirm(`${bad.length} сұрақтың дұрыс жауабы белгіленбеген. Олар тестте «дұрыс жауапсыз» болады. Бәрібір жүктеу керек пе?\n\n(Бас тарту үшін Cancel басып, жауаптарды белгілеңіз немесе «Жауабы белгіленбегендерді қоспау» белгісін қойыңыз)`)) return;
+  }
+  if(!qs.length){ alert('Жүктейтін сұрақ жоқ.'); return; }
+  try{
+    const blob=await buildDocx(qs);
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=srcName+'_test.docx'; a.click();
+  }catch(e){ console.error(e); alert('Қате: '+e.message); }
+};
+
+async function handleFile(file){
+  if(!file) return;
+  if(!/\.docx$/i.test(file.name)){ setStatus('Тек .docx файл қабылданады.','err'); return; }
+  setStatus('Оқып жатыр...'); $('editor').classList.add('hidden');
+  try{
+    srcName=file.name.replace(/\.docx$/i,'');
+    paras=await readDocx(file);
+    reparse();
+    if(!state.length){ setStatus('Ешқандай сұрақ табылмады. Файлда мәтін бар екенін тексеріңіз.','err'); $('editor').classList.add('hidden'); return; }
+    setStatus(`✅ ${state.length} сұрақ оқылды. Төменде тексеріп, дайын docx жүктеп алыңыз.`,'ok');
+  }catch(e){ console.error(e); setStatus('Қате: '+e.message,'err'); }
+}
+
+function toMakerQs(){
+  let qs=state.filter(q=>q.options.length>=1);
+  const bad=qs.filter(q=>q.correct<0);
+  if(bad.length){
+    if($('skipBad').checked) qs=qs.filter(q=>q.correct>=0);
+    else if(!confirm(`${bad.length} сұрақтың дұрыс жауабы белгіленбеген. Олар тестте «дұрыс жауапсыз» болады. Бәрібір жалғастыру керек пе?\n\n(Бас тарту үшін Cancel басып, жауаптарды белгілеңіз немесе «Жауабы белгіленбегендерді қоспау» белгісін қойыңыз)`)) return null;
+  }
+  const out=[];
+  for(const q of qs){
+    const variants=[]; let correct=null;
+    q.options.forEach((o,i)=>{
+      const t=(o.text||'').trim()||(o.image?('ABCDEF'[i]||String(i+1)):'');
+      if(!t&&!o.image) return;
+      variants.push({text:t,image:o.image||null});
+      if(i===q.correct) correct=t;
+    });
+    out.push({id:out.length+1,question:q.text,correct:correct,variants:variants,image:q.image||null});
+  }
+  return out;
+}
+$('btnSend').onclick=()=>{
+  const qs=toMakerQs(); if(!qs) return;
+  if(!qs.length){ alert('Жіберетін сұрақ жоқ.'); return; }
+  window.QMaker.load(qs,srcName);
+};
+const drop=$('drop'), fi=$('file');
+drop.onclick=()=>fi.click();
+fi.onchange=()=>{ handleFile(fi.files[0]); fi.value=''; };
 ['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('over');}));
 ['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('over');}));
 drop.addEventListener('drop',e=>handleFile(e.dataTransfer.files[0]));
-$('btnOpen').onclick=()=>window.open(URL.createObjectURL(new Blob([currentHtml()],{type:'text/html'})),'_blank');
-$('btnDl').onclick=()=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([currentHtml()],{type:'text/html'})); a.download='index.html'; a.click(); };
-$('btnPub').onclick=publish;
-$('btnSave').onclick=saveSettings;
-$('btnRefresh').onclick=loadList;
-$('btnCopy').onclick=async()=>{ try{ await navigator.clipboard.writeText($('linkInp').value); $('btnCopy').textContent='Көшірілді ✓'; setTimeout(()=>$('btnCopy').textContent='Көшіру',1500);}catch(e){ $('linkInp').select(); } };
-loadSettings(); loadList();
+$('mode').onchange=reparse;
+$('ans').onchange=reparse;
+$('onlyBad').onchange=render;
+
+})();
 </script>
 </body>
 </html>
